@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth;
     ActivityMainBinding binding;
-    ImageView add;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
             mAuth.signOut();
             startActivity(new Intent(MainActivity.this, Login.class));
         });
+
+        binding.MATD.setOnClickListener(view -> {
+            startActivity(new Intent(MainActivity.this, TransferDataFriendsList.class));
+        });
+
 
     }
 

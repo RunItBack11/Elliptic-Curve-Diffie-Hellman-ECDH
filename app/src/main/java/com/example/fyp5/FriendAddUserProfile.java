@@ -34,6 +34,7 @@ public class FriendAddUserProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_add_user_profile);
 
+
         textView = findViewById(R.id.F_USP);
         friendRequestBtn = findViewById(R.id.F_ADDFRIENDBTN);
         declineRequestBtn =findViewById(R.id.F_DECFRIENDBTN);

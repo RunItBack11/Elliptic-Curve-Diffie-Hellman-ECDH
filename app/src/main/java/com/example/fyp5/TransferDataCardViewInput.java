@@ -1,14 +1,15 @@
 package com.example.fyp5;
-// friends cardview
-public class CardViewInput {
+
+public class TransferDataCardViewInput {
 
     private String username;
 
     //sangat2 penting, kalau x letak empty constructor mmg
     // x jalan kt firebase
-    public CardViewInput(){}
 
-    public CardViewInput(String username) {
+    public TransferDataCardViewInput(){}
+
+    public TransferDataCardViewInput(String username) {
         this.username = username;
     }
 
@@ -19,4 +20,7 @@ public class CardViewInput {
     public void setUsername(String username) {
         this.username = username;
     }
+
+
 }
+
