@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,20 +38,27 @@ public class TransferDataFriendsList extends AppCompatActivity {
     RecyclerView recyclerView;
     FirebaseRecyclerOptions<TransferDataCardViewInput> options;
     FirebaseRecyclerAdapter<TransferDataCardViewInput,TransferDataViewHolder> adapter;
+    FirebaseRecyclerOptions<CardViewInput> options1;
+    FirebaseRecyclerAdapter<CardViewInput,FriendAddViewHolder> adapter1;
     DatabaseReference friendRef,userRef;
     FirebaseAuth firebaseAuth;
     String current_userId;
-    ArrayList<String> friends;
-    boolean clicked = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer_data_friends_list);
 
+//        MyFirebaseCallback myFirebaseCallback = new MyFirebaseCallback() {
+//            @Override
+//            public void DataFetch(String friendsSearch) {
+//
+//            }
+//        };
+
         inputSearch = findViewById(R.id.F_SB);
         recyclerView = findViewById(R.id.TD_RV);
-        friends = new ArrayList<String>();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
@@ -59,31 +70,29 @@ public class TransferDataFriendsList extends AppCompatActivity {
 
         DisplayFriends();
 
-
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                clicked = true;
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                clicked = true;
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
 
-                clicked = true;
                 if(editable.toString()!= null)
                 {
-//                    Search(editable.toString());
+                    Search(editable.toString());
+//                    LoadData(editable.toString());
                 }
                 else
                 {
-//                    Search("");
+                    Search("");
+//                    LoadData("");
                 }
 
             }
@@ -93,7 +102,7 @@ public class TransferDataFriendsList extends AppCompatActivity {
 
     private void DisplayFriends()
     {
-        Query query = friendRef.orderByChild("date");
+        Query query = friendRef.orderByChild("username");
 
         options = new FirebaseRecyclerOptions.Builder<TransferDataCardViewInput>().setQuery(query, TransferDataCardViewInput.class).build();
         adapter = new FirebaseRecyclerAdapter<TransferDataCardViewInput, TransferDataViewHolder>(options) {
@@ -134,39 +143,21 @@ public class TransferDataFriendsList extends AppCompatActivity {
 
 //    private void Search(String data)
 //    {
-//        Query query = userRef.orderByChild("username").startAt(data).endAt(data+"\uf8ff");
+//        Query query = friendRef.orderByChild("username").startAt(data).endAt(data+"\uf8ff");
 //
 //        options = new FirebaseRecyclerOptions.Builder<TransferDataCardViewInput>().setQuery(query, TransferDataCardViewInput.class).build();
 //        adapter = new FirebaseRecyclerAdapter<TransferDataCardViewInput, TransferDataViewHolder>(options) {
 //            @Override
 //            protected void onBindViewHolder(@NonNull TransferDataViewHolder holder, int position, @NonNull TransferDataCardViewInput model) {
 //
-//
-//                final String other_userId = getRef(position).getKey();
-//
-//                friendRef.child(other_userId).addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        if(snapshot.exists())
-//                        {
-//                            String username = model.getUsername();
-//                            holder.username.setText(username);
-//
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
+//                holder.username.setText(model.getUsername());
 //            }
 //
 //            @NonNull
 //            @Override
 //            public TransferDataViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 //
-//                View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.fa_single_view, parent, false);
+//                View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.td_single_view, parent, false);
 //                return new TransferDataViewHolder(v);
 //            }
 //        };
@@ -176,8 +167,54 @@ public class TransferDataFriendsList extends AppCompatActivity {
 //
 //    }
 
-    private void Search()
+        private void Search(String data)
     {
+        Query query = userRef.orderByChild("username").startAt(data).endAt(data+"\uf8ff");
+
+        options = new FirebaseRecyclerOptions.Builder<TransferDataCardViewInput>().setQuery(query, TransferDataCardViewInput.class).build();
+        adapter = new FirebaseRecyclerAdapter<TransferDataCardViewInput, TransferDataViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull TransferDataViewHolder holder, int position, @NonNull TransferDataCardViewInput model) {
+
+
+                final String other_userId = getRef(position).getKey();
+
+                friendRef.child(other_userId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists())
+                        {
+                            String username = model.getUsername();
+                            holder.username.setText(username);
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @NonNull
+            @Override
+            public TransferDataViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+                View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.td_single_view, parent, false);
+                return new TransferDataViewHolder(v);
+            }
+        };
+
+        adapter.startListening();
+        recyclerView.setAdapter(adapter);
 
     }
+
+
+
+//    private void Search()
+//    {
+//
+//    }
 }

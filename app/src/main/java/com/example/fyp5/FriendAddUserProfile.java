@@ -241,6 +241,91 @@ public class FriendAddUserProfile extends AppCompatActivity {
                 });
     }
 
+//    private void AcceptFriendRequest()
+//    {
+//        databaseReference.child(other_userId).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if(snapshot.exists())
+//                {
+//                    final String username = snapshot.child("username").getValue().toString();
+//
+//                    friendAcceptRef.child(current_userId).child(other_userId).child("username").setValue(username).
+//                            addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//
+//                                    if (task.isSuccessful())
+//                                    {
+//                                        databaseReference.child(current_userId).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                            @Override
+//                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                                                final String username1 = snapshot.child("username").getValue().toString();
+//                                                friendAcceptRef.child(other_userId).child(current_userId).child("username").setValue(username1).
+//                                                        addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                            @Override
+//                                                            public void onComplete(@NonNull Task<Void> task) {
+//
+//                                                                if (task.isSuccessful())
+//                                                                {
+//                                                                    friendReqRef.child(current_userId).child(other_userId)
+//                                                                            .removeValue()
+//                                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                                                @Override
+//                                                                                public void onComplete(@NonNull Task<Void> task) {
+//
+//                                                                                    if (task.isSuccessful())
+//                                                                                    {
+//                                                                                        friendReqRef.child(other_userId).child(current_userId)
+//                                                                                                .removeValue()
+//                                                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                                                                    @Override
+//                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+//
+//                                                                                                        if(task.isSuccessful())
+//                                                                                                        {
+//                                                                                                            friendRequestBtn.setEnabled(true);
+//                                                                                                            currentState = "friends";
+//                                                                                                            friendRequestBtn.setText("UNFRIEND");
+//
+//                                                                                                            declineRequestBtn.setVisibility(View.INVISIBLE);
+//                                                                                                            declineRequestBtn.setEnabled(false);
+//
+//
+//                                                                                                        }
+//                                                                                                    }
+//                                                                                                });
+//                                                                                    }
+//                                                                                }
+//                                                                            });
+//                                                                }
+//                                                            }
+//                                                        });
+//
+//                                            }
+//
+//                                            @Override
+//                                            public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                            }
+//                                        });
+//
+//                                    }
+//                                }
+//                            });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//
+//
+//    }
+
     private void AcceptFriendRequest()
     {
         Calendar calendar = Calendar.getInstance();
