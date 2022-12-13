@@ -16,7 +16,6 @@
             android:id="@+id/TDCV_USN"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="sample"
             android:textSize="25dp"
             android:textStyle="bold"
             android:padding="10dp"/>
@@ -25,7 +24,6 @@
             android:id="@+id/TD_UPP"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="sample"
             android:padding="10dp"
             android:visibility="visible"/>
 

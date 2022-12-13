@@ -38,8 +38,6 @@ public class TransferDataFriendsList extends AppCompatActivity {
     RecyclerView recyclerView;
     FirebaseRecyclerOptions<TransferDataCardViewInput> options;
     FirebaseRecyclerAdapter<TransferDataCardViewInput,TransferDataViewHolder> adapter;
-    FirebaseRecyclerOptions<CardViewInput> options1;
-    FirebaseRecyclerAdapter<CardViewInput,FriendAddViewHolder> adapter1;
     DatabaseReference friendRef,userRef;
     FirebaseAuth firebaseAuth;
     String current_userId;
@@ -49,13 +47,6 @@ public class TransferDataFriendsList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer_data_friends_list);
-
-//        MyFirebaseCallback myFirebaseCallback = new MyFirebaseCallback() {
-//            @Override
-//            public void DataFetch(String friendsSearch) {
-//
-//            }
-//        };
 
         inputSearch = findViewById(R.id.F_SB);
         recyclerView = findViewById(R.id.TD_RV);
@@ -87,12 +78,10 @@ public class TransferDataFriendsList extends AppCompatActivity {
                 if(editable.toString()!= null)
                 {
                     Search(editable.toString());
-//                    LoadData(editable.toString());
                 }
                 else
                 {
                     Search("");
-//                    LoadData("");
                 }
 
             }
@@ -127,6 +116,16 @@ public class TransferDataFriendsList extends AppCompatActivity {
 
                     }
                 });
+
+                holder.v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(TransferDataFriendsList.this, KeyGeneration.class);
+                        intent.putExtra("UserId",getRef(position).getKey());
+                        startActivity(intent);
+                    }
+                });
+
             }
 
             @NonNull
@@ -140,32 +139,6 @@ public class TransferDataFriendsList extends AppCompatActivity {
         adapter.startListening();
         recyclerView.setAdapter(adapter);
     }
-
-//    private void Search(String data)
-//    {
-//        Query query = friendRef.orderByChild("username").startAt(data).endAt(data+"\uf8ff");
-//
-//        options = new FirebaseRecyclerOptions.Builder<TransferDataCardViewInput>().setQuery(query, TransferDataCardViewInput.class).build();
-//        adapter = new FirebaseRecyclerAdapter<TransferDataCardViewInput, TransferDataViewHolder>(options) {
-//            @Override
-//            protected void onBindViewHolder(@NonNull TransferDataViewHolder holder, int position, @NonNull TransferDataCardViewInput model) {
-//
-//                holder.username.setText(model.getUsername());
-//            }
-//
-//            @NonNull
-//            @Override
-//            public TransferDataViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//
-//                View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.td_single_view, parent, false);
-//                return new TransferDataViewHolder(v);
-//            }
-//        };
-//
-//        adapter.startListening();
-//        recyclerView.setAdapter(adapter);
-//
-//    }
 
         private void Search(String data)
     {
@@ -211,10 +184,4 @@ public class TransferDataFriendsList extends AppCompatActivity {
 
     }
 
-
-
-//    private void Search()
-//    {
-//
-//    }
 }
