@@ -90,32 +90,33 @@ public class EllipticCurveFramework {
         BigInteger n = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
         BigInteger[] Q= gPoint;
 
-            int count = 0;
-            String privateKeyBin = privateKey.toString(2);
-            for (int i = 0; i < privateKeyBin.length(); i++) {
-                count++;
-            }
+//            int count = 0;
+//            for (int i = 0; i < privateKeyBin.length(); i++) {
+//                count++;
+//            }
+//
+//            String zeros = "";
+//            if(count < 256)
+//            {
+//                int j = 256;
+//                int padding = j-count;
+//                for(int i =0; i<padding; i++)
+//                {
+//                    zeros += "0";
+//                }
+//            }
 
-            String zeros = "";
-            if(count < 256)
-            {
-                int j = 256;
-                int padding = j-count;
-                for(int i =0; i<padding; i++)
-                {
-                    zeros += "0";
-                }
-            }
+            String privateKeyBin = privateKey.toString(2);
 
             List<String> binaryArray = new ArrayList<String>();
-            String paddedBinary = zeros+privateKeyBin;
-            for(int i=0; i<paddedBinary.length(); i++)
+//            String paddedBinary = zeros+privateKeyBin;
+            for(int i=0; i<privateKeyBin.length(); i++)
             {
-                char a = paddedBinary.charAt(i);
+                char a = privateKeyBin.charAt(i);
                 binaryArray.add(String.valueOf(a));
             }
 
-            for(int i=2; i<paddedBinary.length(); i++)
+            for(int i=1; i<privateKeyBin.length(); i++)
             {
                 Q = ECDoubling(Q);
                 {
