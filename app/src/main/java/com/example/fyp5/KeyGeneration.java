@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -93,43 +94,7 @@ public class KeyGeneration extends AppCompatActivity {
                             privateKey = object.HextoBinary(hex);
                             System.out.println(privateKey);
 
-                            if(privateKey.compareTo(zero) == 0)
-                            {
-                                repeat = false;
-                                Toast.makeText(KeyGeneration.this, "Key = 0, repeat", Toast.LENGTH_SHORT).show();
-                            }
-                            else if(privateKey.compareTo(zero) < 0)
-                            {
-                                repeat = false;
-                                Toast.makeText(KeyGeneration.this, "Key < 0, repeat", Toast.LENGTH_SHORT).show();
-                            }
-                            else if(privateKey.compareTo(n) == 0)
-                            {
-                                repeat = false;
-                                Toast.makeText(KeyGeneration.this, "Key = n, repeat", Toast.LENGTH_SHORT).show();
-                            }
-                            else if(privateKey.compareTo(n) > 0)
-                            {
-                                repeat = false;
-                                Toast.makeText(KeyGeneration.this, "Key > n, repeat", Toast.LENGTH_SHORT).show();
-                            }
-                          else if(privateKey.compareTo(zero) > 0)
-                            {
-                                if(privateKey.compareTo(n) < 0)
-                                {
-                                    Toast.makeText(KeyGeneration.this, "Key is valid, proceed", Toast.LENGTH_SHORT).show();
-                                }
-                                else
-                                {
-                                    Toast.makeText(KeyGeneration.this, "Key is corrupted, Please try again", Toast.LENGTH_SHORT).show();
-                                }
-                                repeat = true;
-                            }
-                          else
-                            {
-                                Toast.makeText(KeyGeneration.this, "Key is corrupted, Please try again", Toast.LENGTH_SHORT).show();
-                                repeat = true;
-                            }
+                            repeat = Conditions(privateKey, n, zero, repeat, getApplicationContext());
 
                         } while (repeat == false);
 
@@ -323,12 +288,54 @@ public class KeyGeneration extends AppCompatActivity {
     // 69984665640564039457584007913129639935, kene try balik smpai
     // dpt value smaller than nombor atas but bigger than 0 (kene check nk kene panjang 256 jugak ke?
 
-    private static String convertBytesToHex(byte[] bytes) {
+    public static String convertBytesToHex(byte[] bytes) {
         StringBuilder result = new StringBuilder();
         for (byte temp : bytes) {
             result.append(String.format("%02x", temp));
         }
         return result.toString();
+    }
+
+    public static boolean Conditions(BigInteger privateKey, BigInteger n, BigInteger zero, boolean repeat, Context context)
+    {
+        if(privateKey.compareTo(zero) == 0)
+        {
+            repeat = false;
+            Toast.makeText(context, "Key = 0, repeat", Toast.LENGTH_SHORT).show();
+        }
+        else if(privateKey.compareTo(zero) < 0)
+        {
+            repeat = false;
+            Toast.makeText(context, "Key < 0, repeat", Toast.LENGTH_SHORT).show();
+        }
+        else if(privateKey.compareTo(n) == 0)
+        {
+            repeat = false;
+            Toast.makeText(context, "Key = n, repeat", Toast.LENGTH_SHORT).show();
+        }
+        else if(privateKey.compareTo(n) > 0)
+        {
+            repeat = false;
+            Toast.makeText(context, "Key > n, repeat", Toast.LENGTH_SHORT).show();
+        }
+        else if(privateKey.compareTo(zero) > 0)
+        {
+            if(privateKey.compareTo(n) < 0)
+            {
+                Toast.makeText(context, "Key is valid, proceed", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(context, "Key is corrupted, Please try again", Toast.LENGTH_SHORT).show();
+            }
+            repeat = true;
+        }
+        else
+        {
+            Toast.makeText(context, "Key is corrupted, Please try again", Toast.LENGTH_SHORT).show();
+            repeat = true;
+        }
+        return repeat;
     }
 
 }
