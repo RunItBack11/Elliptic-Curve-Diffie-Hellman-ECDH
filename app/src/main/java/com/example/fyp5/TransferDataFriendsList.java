@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class TransferDataFriendsList extends AppCompatActivity {
 
-    EditText inputSearch;
+//    EditText inputSearch;
     RecyclerView recyclerView;
     FirebaseRecyclerOptions<TransferDataCardViewInput> options;
     FirebaseRecyclerAdapter<TransferDataCardViewInput,TransferDataViewHolder> adapter;
@@ -48,7 +48,7 @@ public class TransferDataFriendsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer_data_friends_list);
 
-        inputSearch = findViewById(R.id.F_SB);
+//        inputSearch = findViewById(R.id.F_SB);
         recyclerView = findViewById(R.id.TD_RV);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -58,34 +58,33 @@ public class TransferDataFriendsList extends AppCompatActivity {
         friendRef = FirebaseDatabase.getInstance().getReference().child("Friends").child(current_userId);
         userRef = FirebaseDatabase.getInstance().getReference().child("users");
 
-
         DisplayFriends();
 
-        inputSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-                if(editable.toString()!= null)
-                {
-                    Search(editable.toString());
-                }
-                else
-                {
-                    Search("");
-                }
-
-            }
-        });
+//        inputSearch.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//
+//                if(editable.toString()!= null)
+//                {
+//                    Search(editable.toString());
+//                }
+//                else
+//                {
+//                    Search("");
+//                }
+//
+//            }
+//        });
 
     }
 
@@ -125,7 +124,6 @@ public class TransferDataFriendsList extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-
             }
 
             @NonNull
@@ -140,48 +138,47 @@ public class TransferDataFriendsList extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-        private void Search(String data)
-    {
-        Query query = userRef.orderByChild("username").startAt(data).endAt(data+"\uf8ff");
-
-        options = new FirebaseRecyclerOptions.Builder<TransferDataCardViewInput>().setQuery(query, TransferDataCardViewInput.class).build();
-        adapter = new FirebaseRecyclerAdapter<TransferDataCardViewInput, TransferDataViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull TransferDataViewHolder holder, int position, @NonNull TransferDataCardViewInput model) {
-
-
-                final String other_userId = getRef(position).getKey();
-
-                friendRef.child(other_userId).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(snapshot.exists())
-                        {
-                            String username = model.getUsername();
-                            holder.username.setText(username);
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-
-            @NonNull
-            @Override
-            public TransferDataViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-                View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.td_single_view, parent, false);
-                return new TransferDataViewHolder(v);
-            }
-        };
-
-        adapter.startListening();
-        recyclerView.setAdapter(adapter);
-
-    }
+//        private void Search(String data)
+//    {
+//        Query query = userRef.orderByChild("username").startAt(data).endAt(data+"\uf8ff");
+//
+//        options = new FirebaseRecyclerOptions.Builder<TransferDataCardViewInput>().setQuery(query, TransferDataCardViewInput.class).build();
+//        adapter = new FirebaseRecyclerAdapter<TransferDataCardViewInput, TransferDataViewHolder>(options) {
+//            @Override
+//            protected void onBindViewHolder(@NonNull TransferDataViewHolder holder, int position, @NonNull TransferDataCardViewInput model) {
+//
+//                final String other_userId = getRef(position).getKey();
+//                System.out.println(other_userId);
+//                friendRef.child(other_userId).addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        if(snapshot.hasChild()
+//                        {
+//                            String username = model.getUsername();
+//                            holder.username.setText(username);
+//
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
+//            }
+//
+//            @NonNull
+//            @Override
+//            public TransferDataViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//
+//                View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.td_single_view, parent, false);
+//                return new TransferDataViewHolder(v);
+//            }
+//        };
+//
+//        adapter.startListening();
+//        recyclerView.setAdapter(adapter);
+//
+//    }
 
 }

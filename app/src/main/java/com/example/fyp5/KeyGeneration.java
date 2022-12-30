@@ -64,8 +64,8 @@ public class KeyGeneration extends AppCompatActivity {
 
         final BigInteger n = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
         final BigInteger zero = new BigInteger("0", 10);
-        Toast.makeText(this, other_userId, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, current_userId, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, other_userId, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, current_userId, Toast.LENGTH_SHORT).show();
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -164,6 +164,7 @@ public class KeyGeneration extends AppCompatActivity {
                                                                         textView.setVisibility(View.VISIBLE);
                                                                         transferData.setVisibility(View.VISIBLE);
                                                                         countDown.setVisibility(View.INVISIBLE);
+                                                                        exist = true;
                                                                         cancel();
                                                                     }
 
@@ -229,6 +230,7 @@ public class KeyGeneration extends AppCompatActivity {
                                                         @Override
                                                         public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                                                             Toast.makeText(KeyGeneration.this, "Key was not transferred", Toast.LENGTH_SHORT).show();
+                                                            exist = false;
                                                         }
                                                     });
                                                 }
@@ -247,7 +249,7 @@ public class KeyGeneration extends AppCompatActivity {
                                         }
                                     }.start();
 
-                                    exist = true;
+
 
 
 

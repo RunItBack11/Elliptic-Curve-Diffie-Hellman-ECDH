@@ -16,6 +16,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
@@ -24,7 +25,7 @@ import java.util.Calendar;
 public class FriendAddUserProfile extends AppCompatActivity {
 
     TextView textView;
-    DatabaseReference databaseReference, friendReqRef, friendAcceptRef;
+    DatabaseReference databaseReference, friendReqRef, friendAcceptRef, unfriendRef;
     Button friendRequestBtn, declineRequestBtn;
     String current_userId, other_userId, currentState, saveCurrentDate;
     FirebaseAuth firebaseAuth;
@@ -34,7 +35,6 @@ public class FriendAddUserProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_add_user_profile);
 
-
         textView = findViewById(R.id.F_USP);
         friendRequestBtn = findViewById(R.id.F_ADDFRIENDBTN);
         declineRequestBtn =findViewById(R.id.F_DECFRIENDBTN);
@@ -43,6 +43,7 @@ public class FriendAddUserProfile extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
         friendReqRef = FirebaseDatabase.getInstance().getReference().child("FriendRequests");
         friendAcceptRef = FirebaseDatabase.getInstance().getReference().child("Friends");
+        unfriendRef = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
 
         current_userId = firebaseAuth.getCurrentUser().getUid();

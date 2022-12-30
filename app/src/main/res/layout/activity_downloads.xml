@@ -7,15 +7,25 @@
     tools:context=".Downloads">
 
     <TextView
-        android:id="@+id/DOWNLOADS"
-        android:layout_width="wrap_content"
+        android:id="@+id/D_TV"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="downloads"
-        android:textSize="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        android:text="Friends List"
+        android:textSize="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/D_RV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="52dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+         />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/DbottomNavigationView"

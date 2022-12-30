@@ -5,15 +5,21 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -22,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
@@ -36,18 +43,16 @@ import java.util.concurrent.ExecutionException;
 
 public class Downloads extends AppCompatActivity {
 
-    DatabaseReference databaseReference;
-    String current_userId, pubKeyCheck, key1, combination1, state1, keyOutput, senderIDOutput;
+    DatabaseReference databaseReference, friendRef,userRef;;
+    String current_userId;
     FirebaseAuth firebaseAuth;
-    boolean exist = false;
-    boolean repeat = false;
-    BigInteger privateKey;
-    ArrayList<String> keyArray = new ArrayList<>();
+    RecyclerView recyclerView;
+    FirebaseRecyclerOptions<DownloadsCardViewInput> options;
+    FirebaseRecyclerAdapter<DownloadsCardViewInput,DownloadsViewHolder> adapter;
+
     final BigInteger n = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
     final BigInteger zero = new BigInteger("0", 10);
-    ArrayList<String> keyArrayFilter = new ArrayList<>();
-    ArrayList<String> senderIdArray = new ArrayList<>();
-    int i = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +62,11 @@ public class Downloads extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
         current_userId = firebaseAuth.getCurrentUser().getUid();
+        friendRef = FirebaseDatabase.getInstance().getReference().child("Friends").child(current_userId);
+        userRef = FirebaseDatabase.getInstance().getReference().child("users");
 
-
-
+        recyclerView = findViewById(R.id.D_RV);
         BottomNavigationView bottomNavigationView = findViewById(R.id.DbottomNavigationView);
-        TextView textView = findViewById(R.id.DOWNLOADS);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
@@ -82,124 +87,150 @@ public class Downloads extends AppCompatActivity {
             return true;
         });
 
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        databaseReference.child("pubKey").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    String key = ds.child("key").getValue().toString();
-                    keyArray.add(key);
-                    System.out.println(keyArray.get(i));
-                    System.out.println(keyArray.size());
-                    i++;
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
+        DisplayFriends();
     }
 
-    private void getFilteredKeys(Callback callback)
+    private void DisplayFriends()
     {
-        for (int x = 0; x < keyArray.size(); x++) {
-            int xInside = x;
-            exist = false;
+        Query query = friendRef.orderByChild("username");
 
-            databaseReference.child("pubKey").child(keyArray.get(x)).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
+        options = new FirebaseRecyclerOptions.Builder<DownloadsCardViewInput>().setQuery(query, DownloadsCardViewInput.class).build();
+        adapter = new FirebaseRecyclerAdapter<DownloadsCardViewInput, DownloadsViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull DownloadsViewHolder holder, int position, @NonNull DownloadsCardViewInput model) {
+                final String other_userId = getRef(position).getKey();
+                userRef.child(other_userId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists())
+                        {
+                            final String username = snapshot.child("username").getValue().toString();
+                            holder.username.setText(username);
 
-                    String receiverId = snapshot.child("receiverID").getValue().toString();
-                    String state = snapshot.child("state").getValue().toString();
-                    if (receiverId.equals(current_userId) && state.equals("sent")) {
-                        keyArrayFilter.add(snapshot.child("key").getValue().toString());
-                        senderIdArray.add(snapshot.child("senderID").getValue().toString());
-                        System.out.println(keyArrayFilter.get(i));
-                        System.out.println(senderIdArray.get(i));
-                        System.out.println(keyArrayFilter.size());
-
-                        try {
-                            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-
-                            while (!exist) {
-                                do {
-                                    byte[] seed = secureRandom.generateSeed(32);
-                                    System.out.println(Arrays.toString(seed));
-                                    // generate seed
-
-                                    secureRandom.nextBytes(seed);
-                                    System.out.println(Arrays.toString(seed));
-
-                                    KeyGeneration object = new KeyGeneration();
-                                    String hex = object.convertBytesToHex(seed);
-                                    System.out.println(hex);
-
-                                    EllipticCurveFramework object2 = new EllipticCurveFramework();
-                                    privateKey = object2.HextoBinary(hex);
-                                    System.out.println(privateKey);
-
-                                    repeat = object.Conditions(privateKey, n, zero, repeat, getApplicationContext());
-                                } while (!repeat);
-
-                                exist = true;
-                                EllipticCurveFramework object3 = new EllipticCurveFramework();
-                                BigInteger[] publicKeyXY = object3.publicKeyGeneration(object3.gPoint, privateKey);
-
-                                for (int i = 0; i < 2; i++) {
-                                    System.out.println(publicKeyXY[i]);
-                                }
-
-                                databaseReference.child("pubKey").equalTo(publicKeyXY[0].toString()).addValueEventListener(new ValueEventListener() {
-                                    @Override public void onDataChange(@NonNull DataSnapshot snapshot)
-                                    {databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("senderID").setValue(current_userId);
-                                        databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("receiverID").setValue(senderIdArray.get(xInside));
-                                        databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("state").setValue("sent");
-                                        databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("key").setValue(publicKeyXY[0].toString());
-                                        databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("combination").setValue(current_userId + senderIDOutput);
-                                        Toast.makeText(Downloads.this, "Key has been created", Toast.LENGTH_SHORT).show();pubKeyCheck = publicKeyXY[0].toString();}
-                                    @Override public void onCancelled(@NonNull DatabaseError error) {
-                                    }});
-                                callback.onCallback(senderIdArray);
-                            }
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
                         }
-
-                        i++;
-
-
                     }
 
-                    else
-                    {
-                        System.out.println("this key is not yours");
-                        System.out.println(keyArrayFilter.size());
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
-                }
+                });
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                holder.v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Downloads.this, KeyRetrieval.class);
+                        intent.putExtra("UserId",getRef(position).getKey());
+                        startActivity(intent);
+                    }
+                });
+            }
 
-                }
-            });
+            @NonNull
+            @Override
+            public DownloadsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.d_single_view, parent ,false);
+                return new DownloadsViewHolder(view);
+            }
+        };
 
-        }
+        adapter.startListening();
+        recyclerView.setAdapter(adapter);
     }
 
-    private interface Callback
-    {
-        void onCallback(ArrayList<String> list);
-    }
-
-
-
-
-
+//    private void getFilteredKeys(Callback callback)
+//    {
+//        for (int x = 0; x < keyArray.size(); x++) {
+//            int xInside = x;
+//            exist = false;
+//
+//            databaseReference.child("pubKey").child(keyArray.get(x)).addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                    String receiverId = snapshot.child("receiverID").getValue().toString();
+//                    String state = snapshot.child("state").getValue().toString();
+//                    if (receiverId.equals(current_userId) && state.equals("sent")) {
+//                        keyArrayFilter.add(snapshot.child("key").getValue().toString());
+//                        senderIdArray.add(snapshot.child("senderID").getValue().toString());
+//                        System.out.println(keyArrayFilter.get(i));
+//                        System.out.println(senderIdArray.get(i));
+//                        System.out.println(keyArrayFilter.size());
+//
+//                        try {
+//                            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+//
+//                            while (!exist) {
+//                                do {
+//                                    byte[] seed = secureRandom.generateSeed(32);
+//                                    System.out.println(Arrays.toString(seed));
+//                                    // generate seed
+//
+//                                    secureRandom.nextBytes(seed);
+//                                    System.out.println(Arrays.toString(seed));
+//
+//                                    KeyGeneration object = new KeyGeneration();
+//                                    String hex = object.convertBytesToHex(seed);
+//                                    System.out.println(hex);
+//
+//                                    EllipticCurveFramework object2 = new EllipticCurveFramework();
+//                                    privateKey = object2.HextoBinary(hex);
+//                                    System.out.println(privateKey);
+//
+//                                    repeat = object.Conditions(privateKey, n, zero, repeat, getApplicationContext());
+//                                } while (!repeat);
+//
+//                                exist = true;
+//                                EllipticCurveFramework object3 = new EllipticCurveFramework();
+//                                BigInteger[] publicKeyXY = object3.publicKeyGeneration(object3.gPoint, privateKey);
+//
+//                                for (int i = 0; i < 2; i++) {
+//                                    System.out.println(publicKeyXY[i]);
+//                                }
+//
+//                                databaseReference.child("pubKey").equalTo(publicKeyXY[0].toString()).addValueEventListener(new ValueEventListener() {
+//                                    @Override public void onDataChange(@NonNull DataSnapshot snapshot)
+//                                    {databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("senderID").setValue(current_userId);
+//                                        databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("receiverID").setValue(senderIdArray.get(xInside));
+//                                        databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("state").setValue("sent");
+//                                        databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("key").setValue(publicKeyXY[0].toString());
+//                                        databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("combination").setValue(current_userId + senderIDOutput);
+//                                        Toast.makeText(Downloads.this, "Key has been created", Toast.LENGTH_SHORT).show();pubKeyCheck = publicKeyXY[0].toString();}
+//                                    @Override public void onCancelled(@NonNull DatabaseError error) {
+//                                    }});
+//                                callback.onCallback(senderIdArray);
+//                            }
+//                        } catch (NoSuchAlgorithmException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        i++;
+//
+//
+//                    }
+//
+//                    else
+//                    {
+//                        System.out.println("this key is not yours");
+//                        System.out.println(keyArrayFilter.size());
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError error) {
+//
+//                }
+//            });
+//
+//        }
+//    }
+//
+//    private interface Callback
+//    {
+//        void onCallback(ArrayList<String> list);
+//    }
 
 }
 
