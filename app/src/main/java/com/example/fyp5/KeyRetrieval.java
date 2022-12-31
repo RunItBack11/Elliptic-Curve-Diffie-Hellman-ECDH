@@ -4,9 +4,11 @@ import static com.example.fyp5.KeyGeneration.Conditions;
 import static com.example.fyp5.KeyGeneration.convertBytesToHex;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,10 +32,10 @@ import java.util.Arrays;
 public class KeyRetrieval extends AppCompatActivity {
 
     DatabaseReference databaseReference;
-    String current_userId, other_userId, key, combi, pubKeyCheck;
+    String current_userId, other_userId, key, combi, pubKeyCheck, key1, state1, combination1;
     FirebaseAuth firebaseAuth;
     Button downloadFiles;
-    TextView textView1, subtext;
+    TextView textView1, textView2, subtext;
     ImageView imageView;
     BigInteger privateKey;
     boolean exist;
@@ -56,11 +58,13 @@ public class KeyRetrieval extends AppCompatActivity {
 
         downloadFiles = findViewById(R.id.D_DOWNLOADBTN);
         textView1 = findViewById(R.id.D_TEXT1);
+        textView2 = findViewById(R.id.D_TEXT2);
         subtext = findViewById(R.id.D_SUBTEXT);
         imageView = findViewById(R.id.D_KEYICON);
 
         subtext.setVisibility(View.INVISIBLE);
         downloadFiles.setVisibility(View.INVISIBLE);
+        textView2.setVisibility(View.INVISIBLE);
         //error utk yg x de send key so value retrieved is null
 
         Query query = databaseReference.child("pubKey").orderByChild("combination").equalTo(other_userId+current_userId);
@@ -137,6 +141,108 @@ public class KeyRetrieval extends AppCompatActivity {
                                                 Toast.makeText(KeyRetrieval.this, "Key has been created", Toast.LENGTH_SHORT).show();
                                                 pubKeyCheck = publicKeyXY[0].toString();
 
+                                                new CountDownTimer(30000,1000) {
+                                                    @Override
+                                                    public void onTick(long l) {
+
+                                                        downloadFiles.setVisibility(View.INVISIBLE);
+                                                        textView1.setVisibility(View.INVISIBLE);
+                                                        subtext.setVisibility(View.INVISIBLE);
+                                                        imageView.setVisibility(View.INVISIBLE);
+                                                        textView2.setVisibility(View.VISIBLE);
+
+                                                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+                                                        DatabaseReference key = ref.child("pubKey").child(pubKeyCheck).child("key");
+                                                        DatabaseReference state = ref.child("pubKey").child(pubKeyCheck).child("state");
+                                                        DatabaseReference combinationn = ref.child("pubKey").child(pubKeyCheck).child("combination");
+
+                                                        key.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                key1 = snapshot.getValue(String.class);
+
+                                                                state.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                        state1 = snapshot.getValue(String.class);
+
+                                                                        combinationn.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                            @Override
+                                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                combination1 = snapshot.getValue(String.class);
+
+                                                                                if(key1.equals(pubKeyCheck) && combination1.equals(current_userId+other_userId) && state1.equals("completed"))
+                                                                                {
+                                                                                    Toast.makeText(KeyRetrieval.this, "dh jadi", Toast.LENGTH_SHORT).show();
+                                                                                    // tambah buat apa after received
+
+                                                                                    textView2.setVisibility(View.INVISIBLE);
+                                                                                    subtext.setVisibility(View.VISIBLE);
+                                                                                    imageView.setVisibility(View.INVISIBLE);
+                                                                                    downloadFiles.setVisibility(View.VISIBLE);
+                                                                                    textView1.setVisibility(View.VISIBLE);
+                                                                                    textView1.setText("Press the button to \n download your files");
+
+                                                                                    exist = true;
+                                                                                    cancel();
+                                                                                }
+
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                            }
+                                                                        });
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                    }
+                                                                });
+
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
+                                                    }
+
+                                                    @Override
+                                                    public void onFinish() {
+
+                                                        databaseReference.orderByChild("pubKey").equalTo(pubKeyCheck).addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                                                databaseReference.child("pubKey").child(pubKeyCheck).removeValue(new DatabaseReference.CompletionListener() {
+                                                                    @Override
+                                                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                                                        Toast.makeText(KeyRetrieval.this, "Key was not fetched", Toast.LENGTH_SHORT).show();
+                                                                        exist = false;
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
+
+                                                        downloadFiles.setVisibility(View.INVISIBLE);
+                                                        textView1.setVisibility(View.VISIBLE);
+                                                        subtext.setVisibility(View.INVISIBLE);
+                                                        imageView.setVisibility(View.VISIBLE);
+                                                        textView2.setVisibility(View.INVISIBLE);
+
+                                                    }
+                                                }.start();
+
 
                                             }
 
@@ -148,10 +254,7 @@ public class KeyRetrieval extends AppCompatActivity {
                                         }
                                     });
 
-                                    subtext.setVisibility(View.VISIBLE);
-                                    imageView.setVisibility(View.INVISIBLE);
-                                    downloadFiles.setVisibility(View.VISIBLE);
-                                    textView1.setText("Press the button to \n download your files");
+
 
                                 }
 
