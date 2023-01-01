@@ -32,7 +32,7 @@ import java.util.Arrays;
 public class KeyRetrieval extends AppCompatActivity {
 
     DatabaseReference databaseReference;
-    String current_userId, other_userId, key, combi, pubKeyCheck, key1, state1, combination1;
+    String current_userId, other_userId, key, combi, pubKeyCheck, key1, key2,  state1, combination1;
     FirebaseAuth firebaseAuth;
     Button downloadFiles;
     TextView textView1, textView2, subtext;
@@ -113,7 +113,7 @@ public class KeyRetrieval extends AppCompatActivity {
 
                                             repeat = Conditions(privateKey, n, zero, repeat, getApplicationContext());
 
-                                        }while(repeat == false);
+                                        }while(!repeat);
 
                                         exist = true;
 
@@ -139,7 +139,8 @@ public class KeyRetrieval extends AppCompatActivity {
                                                     databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("senderID").setValue(current_userId);
                                                     databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("receiverID").setValue(other_userId);
                                                     databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("state").setValue("sent");
-                                                    databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("key").setValue(publicKeyXY[0].toString());
+                                                    databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("keyX").setValue(publicKeyXY[0].toString());
+                                                    databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("keyY").setValue(publicKeyXY[1].toString());
                                                     databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("combination").setValue(current_userId+other_userId);
 
                                                     Toast.makeText(KeyRetrieval.this, "Key has been created", Toast.LENGTH_SHORT).show();
@@ -157,41 +158,54 @@ public class KeyRetrieval extends AppCompatActivity {
 
                                                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
-                                                            DatabaseReference key = ref.child("pubKey").child(pubKeyCheck).child("key");
+                                                            DatabaseReference keyX = ref.child("pubKey").child(pubKeyCheck).child("keyX");
+                                                            DatabaseReference keyY = ref.child("pubKey").child(pubKeyCheck).child("keyY");
                                                             DatabaseReference state = ref.child("pubKey").child(pubKeyCheck).child("state");
                                                             DatabaseReference combinationn = ref.child("pubKey").child(pubKeyCheck).child("combination");
 
-                                                            key.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            keyX.addListenerForSingleValueEvent(new ValueEventListener() {
                                                                 @Override
                                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                     key1 = snapshot.getValue(String.class);
 
-                                                                    state.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                    keyY.addListenerForSingleValueEvent(new ValueEventListener() {
                                                                         @Override
                                                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                            state1 = snapshot.getValue(String.class);
+                                                                            key2 = snapshot.getValue(String.class);
 
-                                                                            combinationn.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                            state.addListenerForSingleValueEvent(new ValueEventListener() {
                                                                                 @Override
                                                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                                    combination1 = snapshot.getValue(String.class);
+                                                                                    state1 = snapshot.getValue(String.class);
 
-                                                                                    if(key1.equals(pubKeyCheck) && combination1.equals(current_userId+other_userId) && state1.equals("completed"))
-                                                                                    {
-                                                                                        Toast.makeText(KeyRetrieval.this, "dh jadi", Toast.LENGTH_SHORT).show();
-                                                                                        // tambah buat apa after received
+                                                                                    combinationn.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                        @Override
+                                                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                            combination1 = snapshot.getValue(String.class);
 
-                                                                                        textView2.setVisibility(View.INVISIBLE);
-                                                                                        subtext.setVisibility(View.VISIBLE);
-                                                                                        imageView.setVisibility(View.INVISIBLE);
-                                                                                        downloadFiles.setVisibility(View.VISIBLE);
-                                                                                        textView1.setVisibility(View.VISIBLE);
-                                                                                        textView1.setText("Press the button to \n download files");
+                                                                                            if(key1.equals(pubKeyCheck) && combination1.equals(current_userId+other_userId) && state1.equals("completed"))
+                                                                                            {
+                                                                                                Toast.makeText(KeyRetrieval.this, "dh jadi", Toast.LENGTH_SHORT).show();
+                                                                                                // tambah buat apa after received
 
-                                                                                        exist = true;
-                                                                                        cancel();
-                                                                                    }
+                                                                                                textView2.setVisibility(View.INVISIBLE);
+                                                                                                subtext.setVisibility(View.VISIBLE);
+                                                                                                imageView.setVisibility(View.INVISIBLE);
+                                                                                                downloadFiles.setVisibility(View.VISIBLE);
+                                                                                                textView1.setVisibility(View.VISIBLE);
+                                                                                                textView1.setText("Press the button to \n download files");
 
+                                                                                                exist = true;
+                                                                                                cancel();
+                                                                                            }
+
+                                                                                        }
+
+                                                                                        @Override
+                                                                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                                        }
+                                                                                    });
                                                                                 }
 
                                                                                 @Override
@@ -199,6 +213,7 @@ public class KeyRetrieval extends AppCompatActivity {
 
                                                                                 }
                                                                             });
+
                                                                         }
 
                                                                         @Override
@@ -206,6 +221,8 @@ public class KeyRetrieval extends AppCompatActivity {
 
                                                                         }
                                                                     });
+
+
 
                                                                 }
 
