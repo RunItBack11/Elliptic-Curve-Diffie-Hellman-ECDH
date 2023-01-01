@@ -29,15 +29,16 @@ import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProviderException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
 public class KeyGeneration extends AppCompatActivity {
 
-    String other_userId, current_userId, pubKeyCheck, combination, key1, combination1, state1;
+    String other_userId, current_userId, pubKeyCheck, combination, key1, combination1, state1, combi, receiverKey;
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
-    TextView textView, countDown;
+    TextView textView, countDown, textView2;
     Button transferData;
     ImageView keyIcon;
     BigInteger privateKey;
@@ -53,7 +54,10 @@ public class KeyGeneration extends AppCompatActivity {
         keyIcon = findViewById(R.id.KG_KEYICON);
         transferData = findViewById(R.id.KG_TDBTN);
         textView = findViewById(R.id.KG_TEXT);
-        countDown = findViewById(R.id.KG_SUBTEXT);
+        textView2  = findViewById(R.id.KG_SUBTEXT);
+        countDown = findViewById(R.id.KG_TEXT2);
+        transferData.setVisibility(View.INVISIBLE);
+        textView2.setVisibility(View.INVISIBLE);
         countDown.setVisibility(View.INVISIBLE);
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -64,8 +68,7 @@ public class KeyGeneration extends AppCompatActivity {
 
         final BigInteger n = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
         final BigInteger zero = new BigInteger("0", 10);
-//        Toast.makeText(this, other_userId, Toast.LENGTH_SHORT).show();
-//        Toast.makeText(this, current_userId, Toast.LENGTH_SHORT).show();
+        ArrayList<String> combinationArray = new ArrayList<>();
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -158,14 +161,57 @@ public class KeyGeneration extends AppCompatActivity {
 
                                                                     if(key1.equals(pubKeyCheck) && combination1.equals(current_userId+other_userId) && state1.equals("received"))
                                                                     {
-                                                                        Toast.makeText(KeyGeneration.this, "dh jadi", Toast.LENGTH_SHORT).show();
-                                                                        // tambah buat apa after received
-                                                                        keyIcon.setVisibility(View.VISIBLE);
-                                                                        textView.setVisibility(View.VISIBLE);
-                                                                        transferData.setVisibility(View.VISIBLE);
-                                                                        countDown.setVisibility(View.INVISIBLE);
-                                                                        exist = true;
-                                                                        cancel();
+                                                                        databaseReference.child("pubKey").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                            @Override
+                                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                for(DataSnapshot ds : snapshot.getChildren()) {
+                                                                                    combi = ds.child("combination").getValue().toString();
+                                                                                    combinationArray.add(combi);
+                                                                                }
+
+                                                                                if(combinationArray.contains(other_userId+current_userId))
+                                                                                {
+                                                                                    databaseReference.child("pubKey").orderByChild("combination").equalTo(other_userId+current_userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                        @Override
+                                                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                            for(DataSnapshot ds : snapshot.getChildren()) {
+                                                                                                receiverKey = ds.getKey();
+                                                                                                System.out.println(receiverKey);
+                                                                                            }
+
+                                                                                            if(receiverKey != null)
+                                                                                            {
+                                                                                                databaseReference.child("pubKey").child(receiverKey).child("state").setValue("completed");
+                                                                                                keyIcon.setVisibility(View.INVISIBLE);
+                                                                                                textView.setText("Press the button to \n transfer files");
+                                                                                                textView.setVisibility(View.VISIBLE);
+                                                                                                textView2.setVisibility(View.VISIBLE);
+                                                                                                transferData.setVisibility(View.VISIBLE);
+                                                                                                countDown.setVisibility(View.INVISIBLE);
+                                                                                                exist = true;
+                                                                                                Toast.makeText(KeyGeneration.this, "Key was successfully transferred", Toast.LENGTH_SHORT).show();
+                                                                                                cancel();
+                                                                                            }
+                                                                                        }
+
+                                                                                        @Override
+                                                                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Toast.makeText(KeyGeneration.this, "Oops, there was a problem...", Toast.LENGTH_SHORT).show();
+                                                                                }
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                            }
+                                                                        });
+
                                                                     }
 
                                                                 }
@@ -243,14 +289,11 @@ public class KeyGeneration extends AppCompatActivity {
 
                                             keyIcon.setVisibility(View.VISIBLE);
                                             textView.setVisibility(View.VISIBLE);
-                                            transferData.setVisibility(View.VISIBLE);
+                                            transferData.setVisibility(View.INVISIBLE);
                                             countDown.setVisibility(View.INVISIBLE);
 
                                         }
                                     }.start();
-
-
-
 
 
                                 }
@@ -262,11 +305,6 @@ public class KeyGeneration extends AppCompatActivity {
                             }
                         });
                     }
-
-
-
-
-
 
                 }
 
