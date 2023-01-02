@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -32,12 +33,13 @@ import java.util.Arrays;
 public class KeyRetrieval extends AppCompatActivity {
 
     DatabaseReference databaseReference;
-    String current_userId, other_userId, key, combi, pubKeyCheck, key1, key2,  state1, combination1;
+    String current_userId, other_userId, key, combi, pubKeyCheck, key1, key2,  state1, combination1, pubKey2, privKey;
     FirebaseAuth firebaseAuth;
     Button downloadFiles;
     TextView textView1, textView2, subtext;
     ImageView imageView;
     BigInteger privateKey;
+    Intent intent;
     boolean exist;
     boolean repeat;
 
@@ -124,6 +126,8 @@ public class KeyRetrieval extends AppCompatActivity {
                                         {
                                             System.out.println(publicKeyXY[i]);
                                         }
+
+                                        privKey = privateKey.toString();
 
                                         databaseReference.orderByChild("pubKey").equalTo(publicKeyXY[0].toString()).addValueEventListener(new ValueEventListener() {
                                             @Override
@@ -344,6 +348,31 @@ public class KeyRetrieval extends AppCompatActivity {
                 });
 
 
+
+            }
+        });
+
+        downloadFiles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                databaseReference.child("pubKey").child(key).child("keyY").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        pubKey2 = snapshot.getValue(String.class);
+                        intent= new Intent(KeyRetrieval.this, DataRetrieval.class);
+                        intent.putExtra("senderPrivKey", privKey);
+                        intent.putExtra("receiverPubKeyX", key);
+                        intent.putExtra("receiverPubKeyY", pubKey2);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
             }
         });

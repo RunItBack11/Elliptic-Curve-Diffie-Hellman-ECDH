@@ -6,14 +6,12 @@ import android.os.Bundle;
 
 import java.math.BigInteger;
 
-public class DataTransfer extends AppCompatActivity {
-
-
+public class DataRetrieval extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data_transfer);
+        setContentView(R.layout.activity_data_retrieval);
 
         String privKey = getIntent().getStringExtra("senderPrivKey");
         String pubKeyX = getIntent().getStringExtra("receiverPubKeyX");
