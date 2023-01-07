@@ -25,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.codec.binary.Base64;
+
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.Key;
@@ -37,7 +39,7 @@ import java.util.Locale;
 
 public class KeyGeneration extends AppCompatActivity {
 
-    String other_userId, current_userId, pubKeyCheck, pubKeyCheck2, combination, key1, key2, combination1, state1, combi, receiverKey, privKeyTransfer, pubKey2;
+    String other_userId, current_userId, pubKeyCheck, pubKeyCheck2, combination, key1, key2, combination1, state1, combi, receiverKey, privKeyTransfer, pubKey2, s;
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
     TextView textView, countDown, textView2;
@@ -345,11 +347,41 @@ public class KeyGeneration extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                         pubKey2 = snapshot.getValue(String.class);
-                        System.out.println(pubKey2);
+
+                        BigInteger x = new BigInteger(receiverKey,10);
+                        BigInteger y = new BigInteger(pubKey2,10);
+                        BigInteger privateKey = new BigInteger(privKeyTransfer,10);
+
+                        BigInteger[] pubKeyXY = {x,y};
+                        EllipticCurveFramework object = new EllipticCurveFramework();
+                        BigInteger[] output = object.publicKeyGeneration(pubKeyXY, privateKey);
+
+                        String value = new BigInteger(output[0].toString()
+                                , 10)
+                                .toString(16)
+                                .toUpperCase();
+
+
+                        System.out.println("hexadecimal: " + value);
+
+                        BigInteger bigint = new BigInteger(value, 16);
+
+                        StringBuilder sb = new StringBuilder();
+                        byte[] ba = Base64.encodeInteger(bigint);
+                        for (byte b : ba) {
+                            sb.append((char)b);
+                        }
+
+                        s = sb.toString();
+                        System.out.println(s);
+
                         intent= new Intent(KeyGeneration.this, DataTransfer.class);
                         intent.putExtra("senderPrivKey", privKeyTransfer);
                         intent.putExtra("receiverPubKeyX", receiverKey);
                         intent.putExtra("receiverPubKeyY", pubKey2);
+                        intent.putExtra("secretKey", s);
+                        intent.putExtra("receiverId", other_userId);
+
                         startActivity(intent);
                     }
 

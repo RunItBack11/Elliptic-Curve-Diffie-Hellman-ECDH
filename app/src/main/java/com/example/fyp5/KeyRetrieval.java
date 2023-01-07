@@ -24,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.codec.binary.Base64;
+
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -33,7 +35,7 @@ import java.util.Arrays;
 public class KeyRetrieval extends AppCompatActivity {
 
     DatabaseReference databaseReference;
-    String current_userId, other_userId, key, combi, pubKeyCheck, key1, key2,  state1, combination1, pubKey2, privKey;
+    String current_userId, other_userId, key, combi, pubKeyCheck, key1, key2,  state1, combination1, pubKey2, privKey, s;
     FirebaseAuth firebaseAuth;
     Button downloadFiles;
     TextView textView1, textView2, subtext;
@@ -361,10 +363,40 @@ public class KeyRetrieval extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                         pubKey2 = snapshot.getValue(String.class);
+
+                        BigInteger x = new BigInteger(key,10);
+                        BigInteger y = new BigInteger(pubKey2,10);
+                        BigInteger privateKey = new BigInteger(privKey,10);
+
+                        BigInteger[] pubKeyXY = {x,y};
+                        EllipticCurveFramework object = new EllipticCurveFramework();
+                        BigInteger[] output = object.publicKeyGeneration(pubKeyXY, privateKey);
+
+                        String value = new BigInteger(output[0].toString()
+                                , 10)
+                                .toString(16)
+                                .toUpperCase();
+
+
+                        System.out.println("hexadecimal: " + value);
+
+                        BigInteger bigint = new BigInteger(value, 16);
+
+                        StringBuilder sb = new StringBuilder();
+                        byte[] ba = Base64.encodeInteger(bigint);
+                        for (byte b : ba) {
+                            sb.append((char)b);
+                        }
+
+                        s = sb.toString();
+                        System.out.println(s);
+
                         intent= new Intent(KeyRetrieval.this, DataRetrieval.class);
                         intent.putExtra("senderPrivKey", privKey);
                         intent.putExtra("receiverPubKeyX", key);
                         intent.putExtra("receiverPubKeyY", pubKey2);
+                        intent.putExtra("receiverId", other_userId);
+                        intent.putExtra("secretKey", s);
                         startActivity(intent);
                     }
 

@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".DataTransfer">
 
+    <EditText
+        android:id="@+id/DT_INPUT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a sentence you wish to encrypt..."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageButton
         android:id="@+id/DT_UPLOAD"
         android:layout_width="200dp"

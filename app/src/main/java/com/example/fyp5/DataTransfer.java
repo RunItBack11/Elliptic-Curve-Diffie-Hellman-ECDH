@@ -7,23 +7,38 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 //import android.util.Base64;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.UnsupportedEncodingException;
 import java.lang.Object;
 
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.Locale;
 
 import java.util.Base64;
@@ -31,43 +46,53 @@ import org.apache.commons.codec.binary.Hex;
 //import org.apache.commons.codec.binary.Base64;
 
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-public class DataTransfer extends AppCompatActivity implements Key{
+public class DataTransfer extends AppCompatActivity {
 
     ImageButton imageButton;
+    EditText editText;
     TextView textView1, textView2;
     Button button;
-    String str;
+    String string, ciphertextBase64;
     String stringKey;
     boolean time;
-    SecretKey secretKey;
     String encodedKey;
+//    byte[] ciphertext;
+    DatabaseReference databaseReference;
+    FirebaseDatabase firebaseDatabase;
+    FirebaseAuth firebaseAuth;
+    int count = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_transfer);
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
         imageButton = findViewById(R.id.DT_UPLOAD);
         textView1 = findViewById(R.id.DT_TEXT1);
         textView2 = findViewById(R.id.DT_TEXT2);
         button = findViewById(R.id.DT_UPLOADBTN);
+        editText = findViewById(R.id.DT_INPUT);
 
         textView2.setVisibility(View.INVISIBLE);
         button.setVisibility(View.INVISIBLE);
 
-
-        try {
-            secretKey = KeyGenerator.getInstance("AES").generateKey();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
         String privKey = getIntent().getStringExtra("senderPrivKey");
         String pubKeyX = getIntent().getStringExtra("receiverPubKeyX");
         String pubKeyY = getIntent().getStringExtra("receiverPubKeyY");
+        String secretKey = getIntent().getStringExtra("secretKey");
+        String receiverId = getIntent().getStringExtra("receiverId");
+        String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
         System.out.println(privKey);
         System.out.println(pubKeyX);
@@ -105,35 +130,101 @@ public class DataTransfer extends AppCompatActivity implements Key{
             @Override
             public void onClick(View view) {
 
-//                        String hexadecimal = value;
-//                        System.out.println("hexadecimal: " + hexadecimal);
-//
-//                        BigInteger bigint = new BigInteger(hexadecimal, 16);
-//
-//                        StringBuilder sb = new StringBuilder();
-//                        byte[] ba = Base64.encodeInteger(bigint);
-//                        for (byte b : ba) {
-//                            sb.append((char)b);
-//                        }
-//                        String s = sb.toString();
-//                        System.out.println("base64: " + s);
-//                        System.out.println("encoded: " + Base64.isBase64(s));
+                String input = editText.getText().toString().trim();
 
-
-                SecretKey key = null;
-                try {
-                    key = KeyGenerator.getInstance("AES").generateKey();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-                if (key != null)
+                if (input.isEmpty())
                 {
-//                    stringKey = Base64.encodeToString(key.getEncoded(), Base64.DEFAULT);
-                    encodedKey = Base64.getEncoder().encodeToString(key.getEncoded());
+                    editText.setError("Please enter a sentence before clicking encrypt");
                 }
-//                System.out.println(stringKey);
-                System.out.println(encodedKey);
 
+                else
+                {
+                    editText.getText().clear();
+                    byte[] decodedKey = Base64.getDecoder().decode(secretKey);
+                    SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
+                    System.out.println(originalKey);
+
+                    try {
+                        byte[] cipherText = encryptMsg(input, originalKey);
+//                    string = new String(cipherText);
+                        ciphertextBase64 = Base64.getEncoder().encodeToString(cipherText);
+//                    System.out.println(string);
+                        System.out.println("encrypted: " + encryptMsg(input, originalKey).toString());
+                        System.out.println(ciphertextBase64);
+
+//                   String string = new String(Base64.getDecoder().decode(ciphertextBase64));
+//                   System.out.println(string);
+//                   System.out.println(decryptMsg(Base64.getDecoder().decode(ciphertextBase64), originalKey));
+
+
+                        databaseReference.child("Data").child(currentUserId + receiverId).child(String.valueOf(count)).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                databaseReference.child("Data").child(currentUserId + receiverId).child(String.valueOf(count)).child("senderID").setValue(currentUserId);
+                                databaseReference.child("Data").child(currentUserId + receiverId).child(String.valueOf(count)).child("receiverID").setValue(receiverId);
+                                databaseReference.child("Data").child(currentUserId + receiverId).child(String.valueOf(count)).child("combination").setValue(currentUserId + receiverId);
+                                databaseReference.child("Data").child(currentUserId + receiverId).child(String.valueOf(count)).child("sequence").setValue(String.valueOf(count));
+                                databaseReference.child("Data").child(currentUserId + receiverId).child(String.valueOf(count)).child("data").setValue(ciphertextBase64);
+
+                                count++;
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                        //use count
+                        //int count = 0
+                        //count++;
+                        //masukkan dlm database as string number: 1,2,3...
+                        //other side: getchildren()
+                        //add all numbers into an array
+                        //masuk balik database, use the string number as the query and print all the
+
+                        //other side:
+                    } catch (NoSuchAlgorithmException e) {
+                        System.out.print("invalid algo");
+                        e.printStackTrace();
+                    } catch (NoSuchPaddingException e) {
+                        System.out.print("invalid padding");
+                        e.printStackTrace();
+                    } catch (InvalidKeyException e) {
+                        System.out.print("invalid key");
+                        e.printStackTrace();
+                    } catch (InvalidParameterSpecException e) {
+                        System.out.print("invalid param");
+                        e.printStackTrace();
+                    } catch (IllegalBlockSizeException e) {
+                        System.out.print("invalid blocksize");
+                        e.printStackTrace();
+                    } catch (BadPaddingException e) {
+                        System.out.print("bad padding");
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        System.out.print("oops");
+                        e.printStackTrace();
+                    } /*catch (InvalidAlgorithmParameterException e) {
+                    e.printStackTrace();
+                }*/
+
+//                SecretKey key = null;
+//                try {
+//                    key = KeyGenerator.getInstance("AES").generateKey();
+//                } catch (NoSuchAlgorithmException e) {
+//                    e.printStackTrace();
+//                }
+//                if (key != null)
+//                {
+//                  stringKey = Base64.encodeToString(key.getEncoded(), Base64.DEFAULT);
+////                    encodedKey = Base64.getEncoder().encodeToString(key.getEncoded());
+//                }
+//                System.out.println(stringKey);
+////                System.out.println(encodedKey);
+
+                }
             }
         });
 
@@ -154,41 +245,39 @@ public class DataTransfer extends AppCompatActivity implements Key{
 
         }
 
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(requestCode == 28){
+//            if (resultCode == RESULT_OK){
+//                if(data == null){
+//                    return;
+//                }else{
+//                    Uri u = data.getData();
+//                }
+//            }
+//        }
+//    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 28){
-            if (resultCode == RESULT_OK){
-                if(data == null){
-                    return;
-                }else{
-                    Uri u = data.getData();
-                }
-            }
-        }
+    public static byte[] encryptMsg(String message, SecretKey secret)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidParameterSpecException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException
+    {
+        Cipher cipher = null;
+        cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, secret);
+        byte[] cipherText = cipher.doFinal(message.getBytes("UTF-8"));
+        return cipherText;
     }
 
-
-    public void chooseFile(){
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-        startActivityForResult(intent,28);
+    public static String decryptMsg(byte[] cipherText, SecretKey secret)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException
+    {
+        /* Decrypt the message, given derived encContentValues and initialization vector. */
+        Cipher cipher = null;
+        cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, secret);
+        String decryptString = new String(cipher.doFinal(cipherText), "UTF-8");
+        return decryptString;
     }
 
-    @Override
-    public String getAlgorithm() {
-        return null;
-    }
-
-    @Override
-    public String getFormat() {
-        return null;
-    }
-
-    @Override
-    public byte[] getEncoded() {
-        return new byte[0];
-    }
 }
