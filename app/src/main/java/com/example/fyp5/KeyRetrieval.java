@@ -35,10 +35,10 @@ import java.util.Arrays;
 public class KeyRetrieval extends AppCompatActivity {
 
     DatabaseReference databaseReference;
-    String current_userId, other_userId, key, combi, pubKeyCheck, key1, key2,  state1, combination1, pubKey2, privKey, s;
+    String current_userId, other_userId, key, combi, pubKeyCheck, key1, key2,  state1, combination1, pubKey2, privKey, s, status;
     FirebaseAuth firebaseAuth;
     Button downloadFiles;
-    TextView textView1, textView2, subtext;
+    TextView textView1, textView2, textView3, subtext;
     ImageView imageView;
     BigInteger privateKey;
     Intent intent;
@@ -63,9 +63,11 @@ public class KeyRetrieval extends AppCompatActivity {
         downloadFiles = findViewById(R.id.D_DOWNLOADBTN);
         textView1 = findViewById(R.id.D_TEXT1);
         textView2 = findViewById(R.id.D_TEXT2);
+        textView3 = findViewById(R.id.D_TEXT3);
         subtext = findViewById(R.id.D_SUBTEXT);
         imageView = findViewById(R.id.D_KEYICON);
 
+        textView3.setVisibility(View.INVISIBLE);
         subtext.setVisibility(View.INVISIBLE);
         downloadFiles.setVisibility(View.INVISIBLE);
         textView2.setVisibility(View.INVISIBLE);
@@ -191,15 +193,44 @@ public class KeyRetrieval extends AppCompatActivity {
 
                                                                                             if(key1.equals(pubKeyCheck) && combination1.equals(current_userId+other_userId) && state1.equals("completed"))
                                                                                             {
-                                                                                                Toast.makeText(KeyRetrieval.this, "dh jadi", Toast.LENGTH_SHORT).show();
+                                                                                                Toast.makeText(KeyRetrieval.this, "Key successfully retrieved", Toast.LENGTH_SHORT).show();
                                                                                                 // tambah buat apa after received
 
-                                                                                                textView2.setVisibility(View.INVISIBLE);
-                                                                                                subtext.setVisibility(View.VISIBLE);
+                                                                                                downloadFiles.setVisibility(View.INVISIBLE);
+                                                                                                textView1.setVisibility(View.INVISIBLE);
+                                                                                                subtext.setVisibility(View.INVISIBLE);
                                                                                                 imageView.setVisibility(View.INVISIBLE);
-                                                                                                downloadFiles.setVisibility(View.VISIBLE);
-                                                                                                textView1.setVisibility(View.VISIBLE);
-                                                                                                textView1.setText("Press the button to \n download files");
+                                                                                                textView2.setVisibility(View.INVISIBLE);
+                                                                                                textView3.setVisibility(View.VISIBLE);
+
+                                                                                                databaseReference.child("DataStatus").child(other_userId+current_userId).child("state").addValueEventListener(new ValueEventListener() {
+                                                                                                    @Override
+                                                                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                                        if(snapshot.exists())
+                                                                                                        {
+                                                                                                            status = snapshot.getValue(String.class);
+                                                                                                            if(status.equals("completed"))
+                                                                                                            {
+                                                                                                                downloadFiles.setVisibility(View.VISIBLE);
+                                                                                                                textView1.setText("Press the button to \n download files");
+                                                                                                                textView1.setVisibility(View.VISIBLE);
+                                                                                                                subtext.setVisibility(View.VISIBLE);
+                                                                                                                imageView.setVisibility(View.INVISIBLE);
+                                                                                                                textView2.setVisibility(View.INVISIBLE);
+                                                                                                                textView3.setVisibility(View.INVISIBLE);
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                Toast.makeText(KeyRetrieval.this, "Data not ready yet", Toast.LENGTH_SHORT).show();
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+
+                                                                                                    @Override
+                                                                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                                                    }
+                                                                                                });
 
                                                                                                 exist = true;
                                                                                                 cancel();
@@ -358,7 +389,7 @@ public class KeyRetrieval extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                databaseReference.child("pubKey").child(key).child("keyY").addValueEventListener(new ValueEventListener() {
+                databaseReference.child("pubKey").child(key).child("keyY").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -366,6 +397,7 @@ public class KeyRetrieval extends AppCompatActivity {
 
                         BigInteger x = new BigInteger(key,10);
                         BigInteger y = new BigInteger(pubKey2,10);
+                        System.out.println(y);
                         BigInteger privateKey = new BigInteger(privKey,10);
 
                         BigInteger[] pubKeyXY = {x,y};

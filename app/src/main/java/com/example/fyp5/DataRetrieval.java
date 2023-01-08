@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -46,11 +48,13 @@ import javax.crypto.spec.SecretKeySpec;
 public class DataRetrieval extends AppCompatActivity{
 
     RecyclerView recyclerView;
-    DatabaseReference databaseReference;
+    TextView textView, textView2;
+    DatabaseReference databaseReference, mRef;
     DataRetrievalAdapter dataRetrievalAdapter;
     FirebaseAuth firebaseAuth;
     SecretKey originalKey;
     byte[] ciphertextByte;
+    Button button;
     String currentUserdId,receiverId;
     ArrayList<DataRetrievalCardViewInput> list = new ArrayList<>();
 
@@ -59,7 +63,11 @@ public class DataRetrieval extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_retrieval);
 
+        button = findViewById(R.id.DR_ENDSESSION);
+        textView = findViewById(R.id.DR_TV);
+
         databaseReference = FirebaseDatabase.getInstance().getReference("Data");
+        mRef = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
         currentUserdId = firebaseAuth.getCurrentUser().getUid();
 
@@ -126,6 +134,32 @@ public class DataRetrieval extends AppCompatActivity{
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(DataRetrieval.this, "Oops, something went wrong...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRef.child("Data").child(receiverId+currentUserdId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists())
+                        {
+                            mRef.child("Data").child(receiverId+currentUserdId).removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+                mRef.child("pubKey").child(pubKeyX).removeValue();
+                mRef.child("DataStatus").child(receiverId+currentUserdId).removeValue();
+                Intent intent = new Intent(DataRetrieval.this, MainActivity.class);
+                Toast.makeText(DataRetrieval.this, "Session ended", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
             }
         });
 

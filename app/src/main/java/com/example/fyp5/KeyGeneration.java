@@ -342,7 +342,7 @@ public class KeyGeneration extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                databaseReference.child("pubKey").child(receiverKey).child("keyY").addValueEventListener(new ValueEventListener() {
+                databaseReference.child("pubKey").child(receiverKey).child("keyY").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -377,6 +377,7 @@ public class KeyGeneration extends AppCompatActivity {
 
                         intent= new Intent(KeyGeneration.this, DataTransfer.class);
                         intent.putExtra("senderPrivKey", privKeyTransfer);
+                        intent.putExtra("senderPubKeyX", pubKeyCheck);
                         intent.putExtra("receiverPubKeyX", receiverKey);
                         intent.putExtra("receiverPubKeyY", pubKey2);
                         intent.putExtra("secretKey", s);

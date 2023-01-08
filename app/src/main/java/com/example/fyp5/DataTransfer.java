@@ -58,13 +58,11 @@ public class DataTransfer extends AppCompatActivity {
 
     ImageButton imageButton;
     EditText editText;
-    TextView textView1, textView2;
-    Button button;
+    Button button1, button2;
     String string, ciphertextBase64;
     String stringKey;
     boolean time;
     String encodedKey;
-//    byte[] ciphertext;
     DatabaseReference databaseReference;
     FirebaseDatabase firebaseDatabase;
     FirebaseAuth firebaseAuth;
@@ -75,17 +73,12 @@ public class DataTransfer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_transfer);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        imageButton = findViewById(R.id.DT_UPLOAD);
-        textView1 = findViewById(R.id.DT_TEXT1);
-        textView2 = findViewById(R.id.DT_TEXT2);
-        button = findViewById(R.id.DT_UPLOADBTN);
+        button1 = findViewById(R.id.DT_UPLOADBTN);
+        button2 = findViewById(R.id.DT_ENDSESSION);
         editText = findViewById(R.id.DT_INPUT);
 
-        textView2.setVisibility(View.INVISIBLE);
-        button.setVisibility(View.INVISIBLE);
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         String privKey = getIntent().getStringExtra("senderPrivKey");
         String pubKeyX = getIntent().getStringExtra("receiverPubKeyX");
@@ -93,6 +86,34 @@ public class DataTransfer extends AppCompatActivity {
         String secretKey = getIntent().getStringExtra("secretKey");
         String receiverId = getIntent().getStringExtra("receiverId");
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
+
+                new CountDownTimer(30000, 31000) {
+            @Override
+            public void onTick(long l) {
+                button2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        databaseReference.child("pubKey").child(pubKeyX).removeValue();
+                        databaseReference.child("DataStatus").child(currentUserId+receiverId).child("state").setValue("completed");
+
+                        Intent intent = new Intent(DataTransfer.this, MainActivity.class);
+                        Toast.makeText(DataTransfer.this, "Session ended", Toast.LENGTH_SHORT).show();
+                        startActivity(intent);
+                        cancel();
+                    }
+                });
+            }
+
+            @Override
+            public void onFinish() {
+                databaseReference.child("pubKey").child(pubKeyX).removeValue();
+                databaseReference.child("DataStatus").child(currentUserId+receiverId).child("state").setValue("completed");
+
+                Intent intent = new Intent(DataTransfer.this, TransferDataFriendsList.class);
+                Toast.makeText(DataTransfer.this, "Your time is up", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+        }.start();
 
         System.out.println(privKey);
         System.out.println(pubKeyX);
@@ -126,7 +147,7 @@ public class DataTransfer extends AppCompatActivity {
         Toast.makeText(this, "You have 5 minutes to transfer files", Toast.LENGTH_SHORT).show();
 
 
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -228,20 +249,6 @@ public class DataTransfer extends AppCompatActivity {
             }
         });
 
-//        new CountDownTimer(10000, 1000) {
-//            @Override
-//            public void onTick(long l) {
-//                Toast.makeText(DataTransfer.this, "The clock is running", Toast.LENGTH_SHORT).show();
-//                //technically ade problem sbb x accurate on tick (after 5 ticks dia run on finish punya command tpi still sambung ontick)
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                Intent intent = new Intent(DataTransfer.this, TransferDataFriendsList.class);
-//                Toast.makeText(DataTransfer.this, "Your time is up", Toast.LENGTH_SHORT).show();
-//                startActivity(intent);
-//            }
-//        }.start();
 
         }
 
