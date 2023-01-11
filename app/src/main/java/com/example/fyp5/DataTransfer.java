@@ -172,6 +172,8 @@ public class DataTransfer extends AppCompatActivity {
 //                    System.out.println(string);
                         System.out.println("encrypted: " + encryptMsg(input, originalKey).toString());
                         System.out.println(ciphertextBase64);
+                        string = new String(cipherText);
+                        System.out.println(string);
 
 //                   String string = new String(Base64.getDecoder().decode(ciphertextBase64));
 //                   System.out.println(string);
