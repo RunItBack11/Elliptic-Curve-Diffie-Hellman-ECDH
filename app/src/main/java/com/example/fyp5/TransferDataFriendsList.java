@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,6 +60,29 @@ public class TransferDataFriendsList extends AppCompatActivity {
         userRef = FirebaseDatabase.getInstance().getReference().child("users");
 
         DisplayFriends();
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.TD_bottomNavigationView);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+
+                case R.id.HM:
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    overridePendingTransition(0, 0);
+                    break;
+
+                case R.id.DW:
+                    startActivity(new Intent(getApplicationContext(), Downloads.class));
+                    overridePendingTransition(0, 0);
+                    break;
+
+                case R.id.FR:
+                    startActivity(new Intent(getApplicationContext(), Friends.class));
+                    overridePendingTransition(0, 0);
+                    break;
+            }
+            return true;
+        });
 
 //        inputSearch.addTextChangedListener(new TextWatcher() {
 //            @Override

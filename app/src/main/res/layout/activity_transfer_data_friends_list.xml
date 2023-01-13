@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context=".TransferDataFriendsList">
 
     <TextView
@@ -11,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Friends List"
+        android:textColor="@color/main_theme"
         android:textSize="40dp"
         android:gravity="center"
         />
@@ -20,5 +22,16 @@
         android:layout_height="match_parent"
         android:layout_below="@id/TD_TV"
        />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/TD_bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/background3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navmenu" />
 
 </RelativeLayout>

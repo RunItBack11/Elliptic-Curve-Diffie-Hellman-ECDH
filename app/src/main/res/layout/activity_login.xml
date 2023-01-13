@@ -4,16 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context=".Login">
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="210dp"
+        android:layout_marginRight="80dp"
+        android:src="@drawable/alphabet"
+        android:layout_marginLeft="57dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="210dp"
+        android:layout_marginRight="57dp"
+        android:src="@drawable/letter_s"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/L_EA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="310dp"
+        android:layout_marginTop="380dp"
         android:ems="10"
+        android:textColorHint="#F5F5DC"
         android:inputType="textEmailAddress"
+        android:textColor="#F5F5DC"
         android:hint="Email Address"
+        android:backgroundTint="#F5F5DC"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,8 +47,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:textColor="#F5F5DC"
         android:layout_marginTop="40dp"
+        android:textColorHint="#F5F5DC"
         android:hint="Password"
+        android:backgroundTint="#F5F5DC"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
@@ -35,7 +62,11 @@
         android:id="@+id/L_LGNBTN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LOGIN"
+        android:text="Login"
+        android:textSize="16dp"
+        android:textColor="#ff23729a"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/main_theme"
         android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,6 +76,7 @@
         android:id="@+id/L_REGTXT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#F5F5DC"
         android:text="Don't have an account? Register here"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"

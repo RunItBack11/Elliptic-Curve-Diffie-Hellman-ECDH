@@ -5,14 +5,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/D_CV"
     android:layout_margin="5dp"
-    app:cardElevation="5dp">
+    app:cardElevation="5dp"
+    app:cardCornerRadius="20dp">
 
     <LinearLayout
+        android:background="@drawable/background4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <TextView
+            android:textColor="@color/main_theme"
             android:id="@+id/DCV_USN"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

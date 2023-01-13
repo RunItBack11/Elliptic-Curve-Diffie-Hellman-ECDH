@@ -4,16 +4,19 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/FA_CV"
-    android:layout_margin="5dp"
-    app:cardElevation="5dp">
+    android:layout_margin="7dp"
+    app:cardElevation="5dp"
+    app:cardCornerRadius="20dp">
 
     <LinearLayout
+        android:background="@drawable/background2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
     
     <TextView
         android:id="@+id/CV_USN"
+        android:textColor="@color/main_theme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="sample"

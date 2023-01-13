@@ -5,6 +5,8 @@
     android:layout_height="wrap_content">
 
     <EditText
+        android:textColor="@color/main_theme"
+        android:textColorHint="@color/main_theme"
         android:id="@+id/F_SB"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

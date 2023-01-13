@@ -4,13 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context=".Register">
 
     <EditText
         android:id="@+id/R_UN"
+        android:textColor="@color/main_theme"
+        android:textColorHint="@color/main_theme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="170dp"
+        android:backgroundTint="#F5F5DC"
         android:ems="10"
         android:inputType="text"
         android:hint="Username"
@@ -22,7 +26,10 @@
         android:id="@+id/R_EA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/main_theme"
+        android:textColor="@color/main_theme"
         android:ems="10"
+        android:backgroundTint="#F5F5DC"
         android:layout_marginTop="20dp"
         android:hint="Email Address"
         android:inputType="textEmailAddress"
@@ -32,7 +39,10 @@
 
     <EditText
         android:id="@+id/R_PW"
+        android:backgroundTint="#F5F5DC"
         android:layout_width="wrap_content"
+        android:textColorHint="@color/main_theme"
+        android:textColor="@color/main_theme"
         android:layout_height="wrap_content"
         android:ems="10"
         android:layout_marginTop="20dp"
@@ -45,7 +55,10 @@
 
     <EditText
         android:id="@+id/R_CPW"
+        android:backgroundTint="#F5F5DC"
         android:layout_width="wrap_content"
+        android:textColorHint="@color/main_theme"
+        android:textColor="@color/main_theme"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:ems="10"
@@ -59,7 +72,10 @@
 
     <EditText
         android:id="@+id/R_PN"
+        android:backgroundTint="#F5F5DC"
         android:layout_width="wrap_content"
+        android:textColorHint="@color/main_theme"
+        android:textColor="@color/main_theme"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:ems="10"
@@ -73,9 +89,12 @@
 
     <Button
         android:id="@+id/R_REGBTN"
+        android:textColor="#ff23729a"
+        android:backgroundTint="@color/main_theme"
+        android:textAllCaps="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="REGISTER"
+        android:text="Register"
         android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,6 +104,7 @@
         android:id="@+id/R_LGNTXT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#F5F5DC"
         android:text="Already have an account? Login here"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"

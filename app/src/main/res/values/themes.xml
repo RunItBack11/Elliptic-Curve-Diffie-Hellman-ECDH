@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.FYP5" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">#F5F5DC</item>
+        <item name="colorPrimaryVariant">#00172D</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>

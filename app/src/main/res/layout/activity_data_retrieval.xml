@@ -4,19 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context=".DataRetrieval">
-
-
-
 
         <Button
             android:id="@+id/DR_ENDSESSION"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="END SESSION"
+            android:text="End Session"
+            android:backgroundTint="@color/main_theme"
+            android:textColor="#ff23729a"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:textSize="20dp"
+            android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +27,8 @@
         android:id="@+id/DR_TV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Decrypted Texts"
+        android:textColor="@color/main_theme"
+        android:text="Press to decrypt texts"
         android:textSize="40dp"
         android:gravity="center"
         />

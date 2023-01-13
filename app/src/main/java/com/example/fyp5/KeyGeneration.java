@@ -198,13 +198,13 @@ public class KeyGeneration extends AppCompatActivity {
                                                                                                         databaseReference.child("pubKey").child(receiverKey).child("state").setValue("completed");
 
                                                                                                         keyIcon.setVisibility(View.INVISIBLE);
-                                                                                                        textView.setText("Press the button to \n transfer files");
+                                                                                                        textView.setText("Press the button to \n transfer data");
                                                                                                         textView.setVisibility(View.VISIBLE);
-                                                                                                        textView2.setVisibility(View.VISIBLE);
+                                                                                                        textView2.setVisibility(View.INVISIBLE);
                                                                                                         transferData.setVisibility(View.VISIBLE);
                                                                                                         countDown.setVisibility(View.INVISIBLE);
                                                                                                         exist = true;
-                                                                                                        Toast.makeText(KeyGeneration.this, "Key was successfully transferred", Toast.LENGTH_SHORT).show();
+                                                                                                        Toast.makeText(KeyGeneration.this, "Key successfully transferred", Toast.LENGTH_SHORT).show();
                                                                                                         cancel();
                                                                                                     }
                                                                                                 }
@@ -217,7 +217,6 @@ public class KeyGeneration extends AppCompatActivity {
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            Toast.makeText(KeyGeneration.this, "Oops, there was a problem...", Toast.LENGTH_SHORT).show();
                                                                                         }
                                                                                     }
 
@@ -441,7 +440,6 @@ public class KeyGeneration extends AppCompatActivity {
         {
             if(privateKey.compareTo(n) < 0)
             {
-                Toast.makeText(context, "Key is valid, proceed", Toast.LENGTH_SHORT).show();
             }
             else
             {

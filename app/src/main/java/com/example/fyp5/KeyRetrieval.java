@@ -151,7 +151,7 @@ public class KeyRetrieval extends AppCompatActivity {
                                                     databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("keyY").setValue(publicKeyXY[1].toString());
                                                     databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("combination").setValue(current_userId+other_userId);
 
-                                                    Toast.makeText(KeyRetrieval.this, "Key has been created", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(KeyRetrieval.this, "Key has been created", Toast.LENGTH_SHORT);
                                                     pubKeyCheck = publicKeyXY[0].toString();
 
                                                     new CountDownTimer(30000,1000) {
@@ -212,9 +212,9 @@ public class KeyRetrieval extends AppCompatActivity {
                                                                                                             if(status.equals("completed"))
                                                                                                             {
                                                                                                                 downloadFiles.setVisibility(View.VISIBLE);
-                                                                                                                textView1.setText("Press the button to \n download files");
+                                                                                                                textView1.setText("Press the button to \n download data");
                                                                                                                 textView1.setVisibility(View.VISIBLE);
-                                                                                                                subtext.setVisibility(View.VISIBLE);
+                                                                                                                subtext.setVisibility(View.INVISIBLE);
                                                                                                                 imageView.setVisibility(View.INVISIBLE);
                                                                                                                 textView2.setVisibility(View.INVISIBLE);
                                                                                                                 textView3.setVisibility(View.INVISIBLE);

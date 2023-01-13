@@ -5,10 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context=".Friends">
 
     <include layout="@layout/search_toolbar"
-        android:id="@+id/search_toolbar"/>
+        android:id="@+id/search_toolbar"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/F_RV"
@@ -21,11 +23,11 @@
     android:id="@+id/FbottomNavigationView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+        android:background="@drawable/background3"
         android:layout_alignParentBottom="true"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-
     app:menu="@menu/bottom_navmenu"/>
 
 </RelativeLayout>

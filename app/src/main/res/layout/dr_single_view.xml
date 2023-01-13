@@ -4,12 +4,14 @@
     android:layout_height="wrap_content"
     android:id="@+id/DR_CV"
     android:layout_margin="5dp"
-    android:elevation="5dp">
+    android:elevation="5dp"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/background4">
 
         <TextView
             android:id="@+id/DR_STR"
@@ -17,6 +19,7 @@
             android:layout_height="wrap_content"
             android:textSize="25dp"
             android:text="sample"
+            android:textColor="@color/main_theme"
             android:textStyle="bold"
             android:padding="10dp"/>
 

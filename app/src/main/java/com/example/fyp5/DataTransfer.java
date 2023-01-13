@@ -109,7 +109,7 @@ public class DataTransfer extends AppCompatActivity {
                 databaseReference.child("pubKey").child(pubKeyX).removeValue();
                 databaseReference.child("DataStatus").child(currentUserId+receiverId).child("state").setValue("completed");
 
-                Intent intent = new Intent(DataTransfer.this, TransferDataFriendsList.class);
+                Intent intent = new Intent(DataTransfer.this, MainActivity.class);
                 Toast.makeText(DataTransfer.this, "Your time is up", Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
@@ -144,7 +144,7 @@ public class DataTransfer extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE}, PackageManager.PERMISSION_GRANTED);
 
-        Toast.makeText(this, "You have 5 minutes to transfer files", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "You have 5 minutes to transfer data", Toast.LENGTH_SHORT).show();
 
 
         button1.setOnClickListener(new View.OnClickListener() {

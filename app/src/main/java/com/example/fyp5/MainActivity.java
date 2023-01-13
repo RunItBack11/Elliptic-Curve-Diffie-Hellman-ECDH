@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         binding.HbottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()) {
 
+                case R.id.HM:
+                    break;
+
                 case R.id.DW:
                     startActivity(new Intent(getApplicationContext(), Downloads.class));
                     overridePendingTransition(0,0);
@@ -46,9 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        binding.MALGTBTN.setOnClickListener(view -> {
-            mAuth.signOut();
-            startActivity(new Intent(MainActivity.this, Login.class));
+        binding.MAS.setOnClickListener(view -> {
+            startActivity(new Intent(MainActivity.this, Settings.class));
         });
 
         binding.MATD.setOnClickListener(view -> {
