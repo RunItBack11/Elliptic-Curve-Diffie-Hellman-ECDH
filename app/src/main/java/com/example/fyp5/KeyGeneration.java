@@ -39,7 +39,7 @@ import java.util.Locale;
 
 public class KeyGeneration extends AppCompatActivity {
 
-    String other_userId, current_userId, pubKeyCheck, pubKeyCheck2, combination, key1, key2, combination1, state1, combi, receiverKey, privKeyTransfer, pubKey2, s;
+    String other_userId, current_userId, pubKeyCheck, pubKeyCheck2, combination, key1, key2, combination1, state1, combi, receiverKey, privKeyTransfer, pubKey2, s, status;
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
     TextView textView, countDown, textView2;
@@ -80,132 +80,152 @@ public class KeyGeneration extends AppCompatActivity {
         keyIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                try {
-
-                    SecureRandom secureRandom =  SecureRandom.getInstance("SHA1PRNG");
-
-                    while(exist == false) {
-                        do {
-                            byte[] seed = secureRandom.generateSeed(32);
-                            System.out.println(Arrays.toString(seed));
-                            // generate seed
-
-                            secureRandom.nextBytes(seed);
-                            System.out.println(Arrays.toString(seed));
-                            // go into PRNG
-
-                            String hex = convertBytesToHex(seed);
-                            System.out.println(hex);
-                            // convert from seed to Hex
-
-                            privateKey = object.HextoBinary(hex);
-                            System.out.println(privateKey);
-
-                            repeat = Conditions(privateKey, n, zero, repeat, getApplicationContext());
-
-                        } while (repeat == false);
-
-                        exist = true;
-                        BigInteger[] publicKeyXY = object.publicKeyGeneration(object.gPoint, privateKey);
-                        for(int i=0; i<2; i++)
+                databaseReference.child("DataStatus").child(current_userId+other_userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists())
                         {
-                            System.out.println(publicKeyXY[i]);
+                            Toast.makeText(KeyGeneration.this, "The other person has not yet ended their session, please try again later.", Toast.LENGTH_SHORT).show();
                         }
+                        else
+                        {
+                            try {
 
-                        privKeyTransfer = privateKey.toString();
-                        pubKeyCheck2 = publicKeyXY[1].toString();
+                                SecureRandom secureRandom =  SecureRandom.getInstance("SHA1PRNG");
 
-                        databaseReference.orderByChild("pubKey").equalTo(publicKeyXY[0].toString()).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if(snapshot.exists())
-                                {
-                                    Toast.makeText(KeyGeneration.this, "public key already exists", Toast.LENGTH_SHORT).show();
-                                    exist = false;
-                                }
-                                else
-                                {
-                                    databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("senderID").setValue(current_userId);
-                                    databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("receiverID").setValue(other_userId);
-                                    databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("state").setValue("sent");
-                                    databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("keyX").setValue(publicKeyXY[0].toString());
-                                    databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("keyY").setValue(publicKeyXY[1].toString());
-                                    databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("combination").setValue(combination);
+                                while(exist == false) {
+                                    do {
+                                        byte[] seed = secureRandom.generateSeed(32);
+                                        System.out.println(Arrays.toString(seed));
+                                        // generate seed
 
-                                    Toast.makeText(KeyGeneration.this, "Key has been created", Toast.LENGTH_SHORT).show();
-                                    pubKeyCheck = publicKeyXY[0].toString();
+                                        secureRandom.nextBytes(seed);
+                                        System.out.println(Arrays.toString(seed));
+                                        // go into PRNG
 
-                                    new CountDownTimer(30000,1000) {
+                                        String hex = convertBytesToHex(seed);
+                                        System.out.println(hex);
+                                        // convert from seed to Hex
+
+                                        privateKey = object.HextoBinary(hex);
+                                        System.out.println(privateKey);
+
+                                        repeat = Conditions(privateKey, n, zero, repeat, getApplicationContext());
+
+                                    } while (repeat == false);
+
+                                    exist = true;
+                                    BigInteger[] publicKeyXY = object.publicKeyGeneration(object.gPoint, privateKey);
+                                    for(int i=0; i<2; i++)
+                                    {
+                                        System.out.println(publicKeyXY[i]);
+                                    }
+
+                                    privKeyTransfer = privateKey.toString();
+                                    pubKeyCheck2 = publicKeyXY[1].toString();
+
+                                    databaseReference.orderByChild("pubKey").equalTo(publicKeyXY[0].toString()).addValueEventListener(new ValueEventListener() {
                                         @Override
-                                        public void onTick(long l) {
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if(snapshot.exists())
+                                            {
+                                                Toast.makeText(KeyGeneration.this, "public key already exists", Toast.LENGTH_SHORT).show();
+                                                exist = false;
+                                            }
+                                            else
+                                            {
+                                                databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("senderID").setValue(current_userId);
+                                                databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("receiverID").setValue(other_userId);
+                                                databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("state").setValue("sent");
+                                                databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("keyX").setValue(publicKeyXY[0].toString());
+                                                databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("keyY").setValue(publicKeyXY[1].toString());
+                                                databaseReference.child("pubKey").child(publicKeyXY[0].toString()).child("combination").setValue(combination);
 
-                                            keyIcon.setVisibility(View.INVISIBLE);
-                                            textView.setVisibility(View.INVISIBLE);
-                                            transferData.setVisibility(View.INVISIBLE);
-                                            countDown.setVisibility(View.VISIBLE);
+                                                Toast.makeText(KeyGeneration.this, "Key has been created", Toast.LENGTH_SHORT).show();
+                                                pubKeyCheck = publicKeyXY[0].toString();
 
-                                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                                                new CountDownTimer(30000,1000) {
+                                                    @Override
+                                                    public void onTick(long l) {
 
-                                            DatabaseReference keyX = ref.child("pubKey").child(pubKeyCheck).child("keyX");
-                                            DatabaseReference keyY = ref.child("pubKey").child(pubKeyCheck).child("keyY");
-                                            DatabaseReference state = ref.child("pubKey").child(pubKeyCheck).child("state");
-                                            DatabaseReference combinationn = ref.child("pubKey").child(pubKeyCheck).child("combination");
+                                                        keyIcon.setVisibility(View.INVISIBLE);
+                                                        textView.setVisibility(View.INVISIBLE);
+                                                        transferData.setVisibility(View.INVISIBLE);
+                                                        countDown.setVisibility(View.VISIBLE);
+
+                                                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+                                                        DatabaseReference keyX = ref.child("pubKey").child(pubKeyCheck).child("keyX");
+                                                        DatabaseReference keyY = ref.child("pubKey").child(pubKeyCheck).child("keyY");
+                                                        DatabaseReference state = ref.child("pubKey").child(pubKeyCheck).child("state");
+                                                        DatabaseReference combinationn = ref.child("pubKey").child(pubKeyCheck).child("combination");
 
 
-                                            keyX.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    key1 = snapshot.getValue(String.class);
+                                                        keyX.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                key1 = snapshot.getValue(String.class);
 
-                                                    keyY.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                            key2 = snapshot.getValue(String.class);
+                                                                keyY.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                        key2 = snapshot.getValue(String.class);
 
-                                                            state.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                @Override
-                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                    state1 = snapshot.getValue(String.class);
+                                                                        state.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                            @Override
+                                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                state1 = snapshot.getValue(String.class);
 
-                                                                    combinationn.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                        @Override
-                                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                            combination1 = snapshot.getValue(String.class);
-
-                                                                            if(key1.equals(pubKeyCheck) && combination1.equals(current_userId+other_userId) && state1.equals("received"))
-                                                                            {
-                                                                                databaseReference.child("pubKey").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                combinationn.addListenerForSingleValueEvent(new ValueEventListener() {
                                                                                     @Override
                                                                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                                        for(DataSnapshot ds : snapshot.getChildren()) {
-                                                                                            combi = ds.child("combination").getValue().toString();
-                                                                                            combinationArray.add(combi);
-                                                                                        }
+                                                                                        combination1 = snapshot.getValue(String.class);
 
-                                                                                        if(combinationArray.contains(other_userId+current_userId))
+                                                                                        if(key1.equals(pubKeyCheck) && combination1.equals(current_userId+other_userId) && state1.equals("received"))
                                                                                         {
-                                                                                            databaseReference.child("pubKey").orderByChild("combination").equalTo(other_userId+current_userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                            databaseReference.child("pubKey").addListenerForSingleValueEvent(new ValueEventListener() {
                                                                                                 @Override
                                                                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                                                     for(DataSnapshot ds : snapshot.getChildren()) {
-                                                                                                        receiverKey = ds.getKey();
-                                                                                                        System.out.println(receiverKey);
+                                                                                                        combi = ds.child("combination").getValue().toString();
+                                                                                                        combinationArray.add(combi);
                                                                                                     }
 
-                                                                                                    if(receiverKey != null)
+                                                                                                    if(combinationArray.contains(other_userId+current_userId))
                                                                                                     {
-                                                                                                        databaseReference.child("pubKey").child(receiverKey).child("state").setValue("completed");
+                                                                                                        databaseReference.child("pubKey").orderByChild("combination").equalTo(other_userId+current_userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                                            @Override
+                                                                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                                                                for(DataSnapshot ds : snapshot.getChildren()) {
+                                                                                                                    receiverKey = ds.getKey();
+                                                                                                                    System.out.println(receiverKey);
+                                                                                                                }
 
-                                                                                                        keyIcon.setVisibility(View.INVISIBLE);
-                                                                                                        textView.setText("Press the button to \n transfer data");
-                                                                                                        textView.setVisibility(View.VISIBLE);
-                                                                                                        textView2.setVisibility(View.INVISIBLE);
-                                                                                                        transferData.setVisibility(View.VISIBLE);
-                                                                                                        countDown.setVisibility(View.INVISIBLE);
-                                                                                                        exist = true;
-                                                                                                        Toast.makeText(KeyGeneration.this, "Key successfully transferred", Toast.LENGTH_SHORT).show();
-                                                                                                        cancel();
+                                                                                                                if(receiverKey != null)
+                                                                                                                {
+                                                                                                                    databaseReference.child("pubKey").child(receiverKey).child("state").setValue("completed");
+
+                                                                                                                    keyIcon.setVisibility(View.INVISIBLE);
+                                                                                                                    textView.setText("Press the button to \n transfer data");
+                                                                                                                    textView.setVisibility(View.VISIBLE);
+                                                                                                                    textView2.setVisibility(View.INVISIBLE);
+                                                                                                                    transferData.setVisibility(View.VISIBLE);
+                                                                                                                    countDown.setVisibility(View.INVISIBLE);
+                                                                                                                    exist = true;
+                                                                                                                    Toast.makeText(KeyGeneration.this, "Key successfully transferred", Toast.LENGTH_SHORT).show();
+                                                                                                                    cancel();
+                                                                                                                }
+                                                                                                            }
+
+                                                                                                            @Override
+                                                                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                                                            }
+                                                                                                        });
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+
                                                                                                     }
                                                                                                 }
 
@@ -214,10 +234,9 @@ public class KeyGeneration extends AppCompatActivity {
 
                                                                                                 }
                                                                                             });
+
                                                                                         }
-                                                                                        else
-                                                                                        {
-                                                                                        }
+
                                                                                     }
 
                                                                                     @Override
@@ -225,113 +244,85 @@ public class KeyGeneration extends AppCompatActivity {
 
                                                                                     }
                                                                                 });
-
                                                                             }
 
-                                                                        }
+                                                                            @Override
+                                                                            public void onCancelled(@NonNull DatabaseError error) {
 
-                                                                        @Override
-                                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                                            }
+                                                                        });
+                                                                    }
 
-                                                                        }
-                                                                    });
-                                                                }
+                                                                    @Override
+                                                                    public void onCancelled(@NonNull DatabaseError error) {
 
-                                                                @Override
-                                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                                    }
+                                                                });
 
-                                                                }
-                                                            });
-                                                        }
+                                                            }
 
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
 
-                                                        }
-                                                    });
+                                                            }
+                                                        });
+                                                    }
 
-                                                }
+                                                    @Override
+                                                    public void onFinish() {
 
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                        databaseReference.orderByChild("pubKey").equalTo(pubKeyCheck).addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                                }
-                                            });
+                                                                databaseReference.child("pubKey").child(pubKeyCheck).removeValue(new DatabaseReference.CompletionListener() {
+                                                                    @Override
+                                                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                                                        Toast.makeText(KeyGeneration.this, "Key was not transferred", Toast.LENGTH_SHORT).show();
+                                                                        exist = false;
+                                                                    }
+                                                                });
+                                                            }
 
-//                            combinationn.addValueEventListener(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                    combination1 = snapshot.getValue(String.class);
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(@NonNull DatabaseError error) {
-//
-//                                }
-//                            });
-//
-//                            state.addValueEventListener(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                    state1 = snapshot.getValue(String.class);
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(@NonNull DatabaseError error) {
-//
-//                                }
-//                            });
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
+
+                                                        keyIcon.setVisibility(View.VISIBLE);
+                                                        textView.setVisibility(View.VISIBLE);
+                                                        transferData.setVisibility(View.INVISIBLE);
+                                                        countDown.setVisibility(View.INVISIBLE);
+
+                                                    }
+                                                }.start();
 
 
-
+                                            }
                                         }
 
                                         @Override
-                                        public void onFinish() {
-
-                                            databaseReference.orderByChild("pubKey").equalTo(pubKeyCheck).addValueEventListener(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                                    databaseReference.child("pubKey").child(pubKeyCheck).removeValue(new DatabaseReference.CompletionListener() {
-                                                        @Override
-                                                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                                            Toast.makeText(KeyGeneration.this, "Key was not transferred", Toast.LENGTH_SHORT).show();
-                                                            exist = false;
-                                                        }
-                                                    });
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                                }
-                                            });
-
-                                            keyIcon.setVisibility(View.VISIBLE);
-                                            textView.setVisibility(View.VISIBLE);
-                                            transferData.setVisibility(View.INVISIBLE);
-                                            countDown.setVisibility(View.INVISIBLE);
+                                        public void onCancelled(@NonNull DatabaseError error) {
 
                                         }
-                                    }.start();
-
-
+                                    });
                                 }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
 
                             }
-                        });
+
+                            catch (NoSuchAlgorithmException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
 
-                }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
+                    }
+                });
+
 
 
             }

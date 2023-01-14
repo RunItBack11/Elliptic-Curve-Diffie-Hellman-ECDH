@@ -87,7 +87,7 @@ public class DataTransfer extends AppCompatActivity {
         String receiverId = getIntent().getStringExtra("receiverId");
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
-                new CountDownTimer(30000, 31000) {
+                new CountDownTimer(300000, 300001) {
             @Override
             public void onTick(long l) {
                 button2.setOnClickListener(new View.OnClickListener() {

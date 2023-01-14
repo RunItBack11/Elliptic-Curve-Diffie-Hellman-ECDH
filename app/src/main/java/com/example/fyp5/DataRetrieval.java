@@ -81,7 +81,7 @@ public class DataRetrieval extends AppCompatActivity{
         System.out.println(pubKeyX);
         System.out.println(pubKeyY);
 
-        databaseReference.child(receiverId+currentUserdId).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(receiverId+currentUserdId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists())
@@ -140,7 +140,7 @@ public class DataRetrieval extends AppCompatActivity{
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mRef.child("Data").child(receiverId+currentUserdId).addValueEventListener(new ValueEventListener() {
+                mRef.child("Data").child(receiverId+currentUserdId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if(snapshot.exists())
