@@ -47,7 +47,7 @@ public class Login extends AppCompatActivity {
 
         if(email.isEmpty())
         {
-            l_email.setError("Email cannot be empty");
+            l_email.setError("Email Address cannot be empty");
             l_email.requestFocus();
         }
         else if(password.isEmpty())

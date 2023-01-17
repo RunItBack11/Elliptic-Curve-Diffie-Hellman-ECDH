@@ -39,7 +39,7 @@ import java.util.Locale;
 
 public class KeyGeneration extends AppCompatActivity {
 
-    String other_userId, current_userId, pubKeyCheck, pubKeyCheck2, combination, key1, key2, combination1, state1, combi, receiverKey, privKeyTransfer, pubKey2, s, status;
+    String other_userId, current_userId, pubKeyCheck, pubKeyCheck2, combination, key1, key2, combination1, state1, combi, receiverKey, privKeyTransfer, pubKey2, s, key;
     DatabaseReference databaseReference;
     FirebaseAuth firebaseAuth;
     TextView textView, countDown, textView2;
@@ -223,10 +223,7 @@ public class KeyGeneration extends AppCompatActivity {
                                                                                                             }
                                                                                                         });
                                                                                                     }
-                                                                                                    else
-                                                                                                    {
 
-                                                                                                    }
                                                                                                 }
 
                                                                                                 @Override
@@ -235,6 +232,21 @@ public class KeyGeneration extends AppCompatActivity {
                                                                                                 }
                                                                                             });
 
+                                                                                        }
+                                                                                        else if(key1.equals(pubKeyCheck) && combination1.equals(current_userId+other_userId) && state1.equals("declined"))
+                                                                                        {
+                                                                                            databaseReference.child("pubKey").child(pubKeyCheck).removeValue(new DatabaseReference.CompletionListener() {
+                                                                                                @Override
+                                                                                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                                                                                    Toast.makeText(KeyGeneration.this, "Key transfer was declined", Toast.LENGTH_SHORT).show();
+                                                                                                    exist = false;
+                                                                                                    keyIcon.setVisibility(View.VISIBLE);
+                                                                                                    textView.setVisibility(View.VISIBLE);
+                                                                                                    transferData.setVisibility(View.INVISIBLE);
+                                                                                                    countDown.setVisibility(View.INVISIBLE);
+                                                                                                    cancel();
+                                                                                                }
+                                                                                            });
                                                                                         }
 
                                                                                     }

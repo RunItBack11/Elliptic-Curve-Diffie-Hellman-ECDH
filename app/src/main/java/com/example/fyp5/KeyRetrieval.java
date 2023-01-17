@@ -37,7 +37,7 @@ public class KeyRetrieval extends AppCompatActivity {
     DatabaseReference databaseReference;
     String current_userId, other_userId, key, combi, pubKeyCheck, key1, key2,  state1, combination1, pubKey2, privKey, s, status;
     FirebaseAuth firebaseAuth;
-    Button downloadFiles;
+    Button downloadFiles, decline;
     TextView textView1, textView2, textView3, subtext;
     ImageView imageView;
     BigInteger privateKey;
@@ -66,11 +66,13 @@ public class KeyRetrieval extends AppCompatActivity {
         textView3 = findViewById(R.id.D_TEXT3);
         subtext = findViewById(R.id.D_SUBTEXT);
         imageView = findViewById(R.id.D_KEYICON);
+        decline = findViewById(R.id.D_REJECTBTN);
 
         textView3.setVisibility(View.INVISIBLE);
         subtext.setVisibility(View.INVISIBLE);
         downloadFiles.setVisibility(View.INVISIBLE);
         textView2.setVisibility(View.INVISIBLE);
+        decline.setVisibility(View.VISIBLE);
         //error utk yg x de send key so value retrieved is null
 
         Query query = databaseReference.child("pubKey").orderByChild("combination").equalTo(other_userId+current_userId);
@@ -162,6 +164,7 @@ public class KeyRetrieval extends AppCompatActivity {
                                                             textView1.setVisibility(View.INVISIBLE);
                                                             subtext.setVisibility(View.INVISIBLE);
                                                             imageView.setVisibility(View.INVISIBLE);
+                                                            decline.setVisibility(View.INVISIBLE);
                                                             textView2.setVisibility(View.VISIBLE);
 
                                                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
@@ -202,6 +205,7 @@ public class KeyRetrieval extends AppCompatActivity {
                                                                                                 imageView.setVisibility(View.INVISIBLE);
                                                                                                 textView2.setVisibility(View.INVISIBLE);
                                                                                                 textView3.setVisibility(View.VISIBLE);
+                                                                                                decline.setVisibility(View.INVISIBLE);
 
                                                                                                 databaseReference.child("DataStatus").child(other_userId+current_userId).child("state").addValueEventListener(new ValueEventListener() {
                                                                                                     @Override
@@ -218,6 +222,7 @@ public class KeyRetrieval extends AppCompatActivity {
                                                                                                                 imageView.setVisibility(View.INVISIBLE);
                                                                                                                 textView2.setVisibility(View.INVISIBLE);
                                                                                                                 textView3.setVisibility(View.INVISIBLE);
+                                                                                                                decline.setVisibility(View.INVISIBLE);
                                                                                                             }
                                                                                                             else
                                                                                                             {
@@ -312,11 +317,7 @@ public class KeyRetrieval extends AppCompatActivity {
                                             }
                                         });
 
-
-
                                     }
-
-
 
                                 }
 
@@ -381,6 +382,49 @@ public class KeyRetrieval extends AppCompatActivity {
                 });
 
 
+
+            }
+        });
+
+        decline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                databaseReference.child("pubKey").orderByChild("combination").equalTo(other_userId+current_userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot ds : snapshot.getChildren()) {
+                            key = ds.getKey();
+                            System.out.println(key);
+                        }
+
+                        if(key != null) {
+                            databaseReference.child("pubKey").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        databaseReference.child("pubKey").child(key).child("state").setValue("declined");
+                                        Toast.makeText(KeyRetrieval.this, "Key transfer successfully declined", Toast.LENGTH_SHORT).show();
+                                    }
+                                    key = null;
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                        else
+                        {
+                            Toast.makeText(KeyRetrieval.this, "There are no incoming keys", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
             }
         });

@@ -96,6 +96,7 @@ public class Register extends AppCompatActivity implements UserInfo {
                             String username = ds.child("username").getValue().toString();
                             list.add(username);
                         }
+
                         if(list.contains(username))
                         {
                             r_username.setError("Username already exists");
@@ -137,7 +138,7 @@ public class Register extends AppCompatActivity implements UserInfo {
                         }
 
                         else if (confirmPassword.isEmpty()) {
-                            r_confirmPassword.setError(("Please confirm your password"));
+                            r_confirmPassword.setError(("Confirm Password cannot be empty"));
                         }
 
                         else if (!password.equals(confirmPassword)) {
@@ -146,7 +147,7 @@ public class Register extends AppCompatActivity implements UserInfo {
 
                         else if(phoneNum.isEmpty())
                         {
-                            r_phoneNum.setError("Phone number cannot be empty");
+                            r_phoneNum.setError("Phone Number cannot be empty");
                         }
 
                         else
