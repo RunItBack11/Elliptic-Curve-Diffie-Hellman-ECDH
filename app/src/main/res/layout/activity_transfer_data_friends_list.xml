@@ -7,11 +7,38 @@
     android:background="@drawable/background"
     tools:context=".TransferDataFriendsList">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/TD_CL"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        >
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/TD_LOGOF"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="165dp"
+        android:src="@drawable/alphabet"
+        />
+
+    <ImageView
+        android:id="@+id/TD_LOGOS"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/TD_LOGOF"
+        android:src="@drawable/letter_s"
+        />
+
     <TextView
         android:id="@+id/TD_TV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Friends List"
+        android:layout_below="@id/TD_CL"
         android:textColor="@color/main_theme"
         android:textSize="40dp"
         android:gravity="center"

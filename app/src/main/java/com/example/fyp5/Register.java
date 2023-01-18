@@ -112,7 +112,7 @@ public class Register extends AppCompatActivity implements UserInfo {
                             r_password.setError(("Password cannot be empty"));
                         }
 
-                        else if(password.length() < 12)
+                        else if(password.length() < 11)
                         {
                             r_password.setError(("Password must at least be 12 characters long"));
                         }

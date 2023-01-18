@@ -8,6 +8,25 @@
     tools:context=".KeyRetrieval">
 
     <ImageView
+        android:id="@+id/D_LOGOF"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/alphabet"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/D_LOGOS"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/letter_s"
+        app:layout_constraintStart_toEndOf="@+id/D_LOGOF"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
         android:id="@+id/D_KEYICON"
         android:layout_width="200dp"
         android:layout_height="150dp"

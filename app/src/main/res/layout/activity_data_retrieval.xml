@@ -7,6 +7,32 @@
     android:background="@drawable/background"
     tools:context=".DataRetrieval">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/DR_CL"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        >
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/DR_LOGOF"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="165dp"
+        android:src="@drawable/alphabet"
+        />
+
+    <ImageView
+        android:id="@+id/DR_LOGOS"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/DR_LOGOF"
+        android:src="@drawable/letter_s"
+        />
+
         <Button
             android:id="@+id/DR_ENDSESSION"
             android:layout_width="wrap_content"
@@ -31,6 +57,7 @@
         android:text="Press to decrypt texts"
         android:textSize="40dp"
         android:gravity="center"
+        android:layout_below="@id/DR_CL"
         />
 
     <androidx.recyclerview.widget.RecyclerView

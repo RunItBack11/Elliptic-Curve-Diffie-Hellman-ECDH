@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="210dp"
+        android:layout_marginTop="190dp"
         android:layout_marginRight="80dp"
         android:src="@drawable/alphabet"
         android:layout_marginLeft="57dp"
@@ -20,7 +20,7 @@
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="210dp"
+        android:layout_marginTop="190dp"
         android:layout_marginRight="57dp"
         android:src="@drawable/letter_s"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,7 +29,7 @@
 
     <EditText
         android:id="@+id/L_EA"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="380dp"
         android:ems="10"
@@ -37,21 +37,25 @@
         android:inputType="textEmailAddress"
         android:textColor="#F5F5DC"
         android:hint="Email Address"
-        android:backgroundTint="#F5F5DC"
+        android:drawableRight="@drawable/ic_baseline_person_24"
+        android:background="@drawable/input_search"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/L_PW"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:textColor="#F5F5DC"
         android:layout_marginTop="40dp"
         android:textColorHint="#F5F5DC"
+        android:drawableRight="@drawable/ic_baseline_lock_24"
         android:hint="Password"
-        android:backgroundTint="#F5F5DC"
+        android:background="@drawable/input_search"
+        android:padding="10dp"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"

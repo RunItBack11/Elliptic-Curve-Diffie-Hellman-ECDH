@@ -24,7 +24,7 @@ import java.util.Calendar;
 
 public class FriendAddUserProfile extends AppCompatActivity {
 
-    TextView textView;
+    TextView textView, textView2;
     DatabaseReference databaseReference, friendReqRef, friendAcceptRef, unfriendRef;
     Button friendRequestBtn, declineRequestBtn;
     String current_userId, other_userId, currentState, saveCurrentDate;
@@ -36,6 +36,7 @@ public class FriendAddUserProfile extends AppCompatActivity {
         setContentView(R.layout.activity_friend_add_user_profile);
 
         textView = findViewById(R.id.F_USP);
+        textView2 = findViewById(R.id.F_USPNUM);
         friendRequestBtn = findViewById(R.id.F_ADDFRIENDBTN);
         declineRequestBtn =findViewById(R.id.F_DECFRIENDBTN);
         currentState ="not_friends";
@@ -57,6 +58,9 @@ public class FriendAddUserProfile extends AppCompatActivity {
 
                     String username = snapshot.child("username").getValue().toString();
                     textView.append(username);
+
+                    String phoneNum = snapshot.child("phoneNum").getValue().toString();
+                    textView2.append(phoneNum);
 
                     ButtonMaintenance();
                 }

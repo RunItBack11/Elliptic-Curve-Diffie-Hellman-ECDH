@@ -155,7 +155,7 @@ public class DataTransfer extends AppCompatActivity {
 
                 if (input.isEmpty())
                 {
-                    editText.setError("Please enter a sentence before clicking encrypt");
+                    editText.setError("Please enter a sentence before clicking encrypt sentence");
                 }
 
                 else
@@ -191,6 +191,7 @@ public class DataTransfer extends AppCompatActivity {
                                 databaseReference.child("Data").child(currentUserId + receiverId).child(String.valueOf(count)).child("data").setValue(ciphertextBase64);
 
                                 count++;
+                                Toast.makeText(DataTransfer.this, "Sentence successfully encrypted and sent", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override

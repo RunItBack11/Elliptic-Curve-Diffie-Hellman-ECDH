@@ -7,14 +7,37 @@
     android:background="@drawable/background"
     tools:context=".DataTransfer">
 
+    <ImageView
+        android:id="@+id/DT_LOGOF"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/alphabet"
+        android:layout_marginTop="7dp"
+        android:layout_marginLeft="153dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/DT_LOGOS"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="7dp"
+        android:layout_toRightOf="@id/DT_LOGOF"
+        android:src="@drawable/letter_s"
+        android:layout_marginRight="157dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
-        android:backgroundTint="@color/main_theme"
+        android:layout_marginTop="50dp"
         android:id="@+id/DT_INPUT"
         android:textColor="@color/main_theme"
         android:textColorHint="@color/main_theme"
         android:textSize="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@drawable/input_search"
         android:hint="Enter a sentence you wish to encrypt..."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

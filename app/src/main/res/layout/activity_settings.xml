@@ -7,6 +7,25 @@
     android:background="@drawable/background"
     tools:context=".Settings">
 
+    <ImageView
+        android:id="@+id/S_LOGOF"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/alphabet"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/S_LOGOS"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/letter_s"
+        app:layout_constraintStart_toEndOf="@+id/S_LOGOF"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/S_LGTBTN"
         android:layout_width="wrap_content"

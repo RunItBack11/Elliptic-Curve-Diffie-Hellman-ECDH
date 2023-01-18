@@ -7,14 +7,34 @@
     android:background="@drawable/background"
     tools:context=".Register">
 
+    <ImageView
+        android:id="@+id/R_LOGOF"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/alphabet"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/R_LOGOS"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/letter_s"
+        app:layout_constraintStart_toEndOf="@+id/R_LOGOF"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/R_UN"
         android:textColor="@color/main_theme"
         android:textColorHint="@color/main_theme"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="170dp"
-        android:backgroundTint="#F5F5DC"
+        android:background="@drawable/input_search"
+        android:padding="10dp"
         android:ems="10"
         android:inputType="text"
         android:hint="Username"
@@ -24,12 +44,13 @@
 
     <EditText
         android:id="@+id/R_EA"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:textColorHint="@color/main_theme"
         android:textColor="@color/main_theme"
+        android:background="@drawable/input_search"
+        android:padding="10dp"
         android:ems="10"
-        android:backgroundTint="#F5F5DC"
         android:layout_marginTop="20dp"
         android:hint="Email Address"
         android:inputType="textEmailAddress"
@@ -39,8 +60,9 @@
 
     <EditText
         android:id="@+id/R_PW"
-        android:backgroundTint="#F5F5DC"
-        android:layout_width="wrap_content"
+        android:background="@drawable/input_search"
+        android:padding="10dp"
+        android:layout_width="250dp"
         android:textColorHint="@color/main_theme"
         android:textColor="@color/main_theme"
         android:layout_height="wrap_content"
@@ -55,8 +77,9 @@
 
     <EditText
         android:id="@+id/R_CPW"
-        android:backgroundTint="#F5F5DC"
-        android:layout_width="wrap_content"
+        android:background="@drawable/input_search"
+        android:padding="10dp"
+        android:layout_width="250dp"
         android:textColorHint="@color/main_theme"
         android:textColor="@color/main_theme"
         android:layout_height="wrap_content"
@@ -72,8 +95,9 @@
 
     <EditText
         android:id="@+id/R_PN"
-        android:backgroundTint="#F5F5DC"
-        android:layout_width="wrap_content"
+        android:background="@drawable/input_search"
+        android:padding="10dp"
+        android:layout_width="250dp"
         android:textColorHint="@color/main_theme"
         android:textColor="@color/main_theme"
         android:layout_height="wrap_content"

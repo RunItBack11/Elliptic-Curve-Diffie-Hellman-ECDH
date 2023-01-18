@@ -17,6 +17,25 @@
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/settings"/>
 
+    <ImageView
+        android:id="@+id/MA_LOGOF"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/alphabet"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/MA_LOGOS"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/letter_s"
+        app:layout_constraintStart_toEndOf="@+id/MA_LOGOF"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageButton
         android:id="@+id/MA_TD"
         android:layout_width="100dp"
