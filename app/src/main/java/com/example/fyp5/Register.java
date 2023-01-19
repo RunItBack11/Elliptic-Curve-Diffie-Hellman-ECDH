@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -33,6 +34,7 @@ public class Register extends AppCompatActivity implements UserInfo {
     FirebaseAuth mAuth;
     EditText r_username, r_email, r_password, r_confirmPassword, r_phoneNum;
     Button r_registerBtn;
+    String zero1, one1;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -71,6 +73,8 @@ public class Register extends AppCompatActivity implements UserInfo {
         String username = r_username.getText().toString().trim();
         String phoneNum = r_phoneNum.getText().toString().trim();
 
+
+
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
         Pattern upperCase = Pattern.compile("[A-Z]");
@@ -89,12 +93,15 @@ public class Register extends AppCompatActivity implements UserInfo {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     ArrayList<String> list = new ArrayList<>();
+                    ArrayList<String> list1 = new ArrayList<>();
                     if(snapshot.exists())
                     {
                         for(DataSnapshot ds : snapshot.getChildren())
                         {
                             String username = ds.child("username").getValue().toString();
+                            String email = ds.child("email").getValue().toString();
                             list.add(username);
+                            list1.add(email);
                         }
 
                         if(list.contains(username))
@@ -105,6 +112,11 @@ public class Register extends AppCompatActivity implements UserInfo {
                         else if (email.isEmpty())
                         {
                             r_email.setError(("Email Address cannot be empty"));
+                        }
+
+                        else if (list1.contains(email))
+                        {
+                            r_email.setError(("Email Address is already in use"));
                         }
 
                         else if (password.isEmpty())
@@ -150,56 +162,78 @@ public class Register extends AppCompatActivity implements UserInfo {
                             r_phoneNum.setError("Phone Number cannot be empty");
                         }
 
+                        else if(phoneNum.length() < 10 || phoneNum.length() > 11)
+                        {
+                            r_phoneNum.setError("Phone Number must be 10 or 11 digits long");
+                        }
+
                         else
                         {
-                            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if(task.isSuccessful()){
+                            char zero = phoneNum.charAt(0);
+                            char one = phoneNum.charAt(1);
 
-                                        String userId = FirebaseAuth.getInstance().getUid();
+                            zero1 = String.valueOf(zero);
+                            one1 = String.valueOf(one);
 
-                                        firebaseDatabase = FirebaseDatabase.getInstance();
-                                        databaseReference = firebaseDatabase.getReference("users");
+                            if(!(zero1.equals("0") && one1.equals("1")))
+                            {
+                                r_phoneNum.setError("Phone Number is not valid, it must start with '01'");
+                            }
+
+                            else
+                            {
+                                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if(task.isSuccessful()){
+
+                                            String userId = FirebaseAuth.getInstance().getUid();
+
+                                            firebaseDatabase = FirebaseDatabase.getInstance();
+                                            databaseReference = firebaseDatabase.getReference("users");
 
 
-                                        databaseReference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            databaseReference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                                if(snapshot.hasChild(userId))
-                                                {
-                                                    finish();
+                                                    if(snapshot.hasChild(userId))
+                                                    {
+                                                        finish();
+                                                    }
+
+                                                    else
+                                                    {
+                                                        User user = new User(userId, username, email, phoneNum);
+                                                        databaseReference.child(userId).setValue(user);
+
+                                                        Toast.makeText(Register.this, "User registered successfully", Toast.LENGTH_SHORT).show();
+                                                        finish();
+                                                    }
                                                 }
 
-                                                else
-                                                {
-                                                    User user = new User(userId, username, email, phoneNum);
-                                                    databaseReference.child(userId).setValue(user);
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
 
-                                                    Toast.makeText(Register.this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                                                    finish();
                                                 }
-                                            }
+                                            });
 
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
+                                            startActivity(new Intent(Register.this, Login.class));
 
-                                            }
-                                        });
+                                        }
+                                        else{
+                                            Toast.makeText(Register.this, "Registration Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
-                                        startActivity(new Intent(Register.this, Login.class));
-
+                                        }
                                     }
-                                    else{
-                                        Toast.makeText(Register.this, "Registration Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                });
 
-                                    }
-                                }
-                            });
 
+                            }
 
                         }
+
+
                     }
                 }
 
