@@ -80,6 +80,7 @@ public class KeyGeneration extends AppCompatActivity {
         keyIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                long startTime = System.nanoTime();
                 databaseReference.child("DataStatus").child(current_userId+other_userId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -116,6 +117,9 @@ public class KeyGeneration extends AppCompatActivity {
 
                                     exist = true;
                                     BigInteger[] publicKeyXY = object.publicKeyGeneration(object.gPoint, privateKey);
+                                    long endTime = System.nanoTime();
+                                    long duration = (endTime - startTime)/1000000;
+                                    System.out.println("Time in Milliseconds: " + duration);
                                     for(int i=0; i<2; i++)
                                     {
                                         System.out.println(publicKeyXY[i]);

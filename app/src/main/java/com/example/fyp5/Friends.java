@@ -13,13 +13,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Friends extends AppCompatActivity {
 
@@ -29,6 +38,7 @@ public class Friends extends AppCompatActivity {
     FirebaseRecyclerOptions<CardViewInput> options;
     FirebaseRecyclerAdapter<CardViewInput,FriendAddViewHolder> adapter;
     DatabaseReference databaseReference;
+    ArrayList usernames = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +72,22 @@ public class Friends extends AppCompatActivity {
         databaseReference= FirebaseDatabase.getInstance().getReference().child("users");
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren())
+                {
+                    String username = ds.child("username").getValue().toString();
+                    usernames.add(username);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         LoadData("");
 
         inputSearch.addTextChangedListener(new TextWatcher() {
@@ -80,6 +106,15 @@ public class Friends extends AppCompatActivity {
                 if(editable.toString()!= null)
                 {
                     LoadData(editable.toString());
+
+                    if(listContainsString(usernames, editable.toString()))
+                    {
+
+                    }
+                    else
+                    {
+                        Toast.makeText(Friends.this, "The person you are searching for does not exist", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else
                 {
@@ -90,6 +125,20 @@ public class Friends extends AppCompatActivity {
         });
 
 
+    }
+
+    public boolean listContainsString(List<String> list, String checkStr)
+    {
+        Iterator<String> iter = list.iterator();
+        while(iter.hasNext())
+        {
+            String s = iter.next();
+            if (s.contains(checkStr))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void LoadData(String data){
